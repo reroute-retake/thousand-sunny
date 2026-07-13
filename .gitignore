@@ -1,0 +1,33 @@
+# ── Secrets & credentials — NEVER commit ─────────────────────────
+.env
+.env.*
+*.key
+*.pem
+*.crt
+*.p12
+secrets/
+**/secrets.yml
+**/*secret*
+wg*.conf
+*.kdbx
+
+# ── Runtime / generated ──────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# ── Compose overrides that may contain host-specific data ────────
+docker-compose.override.yml
+**/appdata/
+**/config/*.db
+
+# ── Editor ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# ── Notes: this repo is documentation.
+# Real service configs live on the hosts and in a private, encrypted
+# repo (SOPS/age). Only sanitized examples belong here.
