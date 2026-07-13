@@ -1,0 +1,56 @@
+#cloud-config
+# Thousand Sunny — puffingtom edge bootstrap (provider-agnostic)
+# Paste as "user data" when creating the VPS. Tested shape for Ubuntu 22.04/24.04
+# images on Oracle / RackNerd / Hetzner / Netcup. It hardens the box and installs
+# the base tooling; the app config is applied by the Ansible playbook (Path A) or
+# the Pangolin compose (Path B).
+
+hostname: puffingtom
+preserve_hostname: false
+package_update: true
+package_upgrade: true
+
+users:
+  - name: sunny
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAA...REPLACE_WITH_YOUR_PUBLIC_KEY sunny@home"
+
+packages:
+  - wireguard
+  - ufw
+  - fail2ban
+  - unattended-upgrades
+  - curl
+  - ca-certificates
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/99-hardening.conf
+    content: |
+      PasswordAuthentication no
+      PermitRootLogin no
+      Port 2222
+  - path: /etc/sysctl.d/99-forward.conf
+    content: |
+      net.ipv4.ip_forward=1
+
+runcmd:
+  - sysctl --system
+  # Firewall: SSH(2222), HTTP/HTTPS, WireGuard(51820/udp)
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 2222/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw allow 51820/udp
+  - ufw --force enable
+  - systemctl enable --now fail2ban
+  - systemctl enable --now unattended-upgrades
+  # Docker (only needed for Path B / Pangolin, harmless otherwise)
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker sunny
+  - systemctl enable --now docker
+
+final_message: "puffingtom base ready. Next: run deploy/ansible/site.yml (Path A) or bring up deploy/pangolin (Path B), then repoint DNS."

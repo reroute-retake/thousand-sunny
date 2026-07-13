@@ -1,0 +1,60 @@
+---
+- name: Install base packages
+  ansible.builtin.package:
+    name:
+      - wireguard
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+      - curl
+      - ca-certificates
+    state: present
+
+- name: Harden SSH (key-only, non-standard port)
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/99-hardening.conf
+    content: |
+      PasswordAuthentication no
+      PermitRootLogin no
+      Port {{ ssh_port }}
+    mode: "0644"
+  notify: restart ssh
+
+- name: Enable IPv4 forwarding (tunnel → LAN routing)
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: true
+
+- name: UFW default policies
+  community.general.ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: incoming, policy: deny }
+    - { direction: outgoing, policy: allow }
+
+- name: UFW allow rules (SSH, HTTP/S, WireGuard)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop:
+    - { port: "{{ ssh_port }}", proto: tcp }
+    - { port: "80", proto: tcp }
+    - { port: "443", proto: tcp }
+    - { port: "{{ wg_listen_port }}", proto: udp }
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: Enable fail2ban + unattended-upgrades
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - fail2ban
+    - unattended-upgrades

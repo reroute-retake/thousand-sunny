@@ -1,0 +1,41 @@
+# puffingtom (VPS) — Path B: Pangolin server (alternative to WireGuard+Caddy).
+# Newt (home connector) dials in; Pangolin + Traefik publish resources with TLS + SSO.
+#
+# NOTE: this is a REPRESENTATIVE template. Pangolin ships an official installer that
+# generates the authoritative compose + config; prefer it and consult:
+#   https://docs.fossorial.io  (and doc 10 for the memory-leak workaround rationale)
+
+services:
+  pangolin:
+    image: fosrl/pangolin:1.20.0
+    container_name: pangolin
+    restart: unless-stopped
+    # doc 10: cap RAM on small/free VPS to survive the known 1.13.x+ leak
+    mem_limit: 700m
+    memswap_limit: 700m
+    volumes:
+      - ./config:/app/config
+    environment:
+      - DASHBOARD_DOMAIN=${DASHBOARD_DOMAIN}
+
+  gerbil:
+    image: fosrl/gerbil:latest
+    container_name: gerbil
+    restart: unless-stopped
+    cap_add: [NET_ADMIN, SYS_MODULE]
+    volumes:
+      - ./config/gerbil:/var/config
+    # WireGuard data plane that Newt connects into
+
+  traefik:
+    image: traefik:v3.7
+    container_name: traefik
+    restart: unless-stopped
+    network_mode: service:gerbil
+    depends_on: [pangolin, gerbil]
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/traefik:/etc/traefik
+      - ./config/letsencrypt:/letsencrypt

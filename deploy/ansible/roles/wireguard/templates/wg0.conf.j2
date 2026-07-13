@@ -1,0 +1,10 @@
+# Managed by Ansible — puffingtom (VPS) WireGuard server.
+[Interface]
+Address = {{ wg_address }}
+ListenPort = {{ wg_listen_port }}
+PrivateKey = {{ wg_private_key }}
+
+[Peer]
+# home (dials out; no Endpoint)
+PublicKey = {{ home_public_key }}
+AllowedIPs = {{ home_tunnel_ip }}/32, {{ home_servers_cidr }}

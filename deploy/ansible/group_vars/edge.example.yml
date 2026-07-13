@@ -1,0 +1,21 @@
+# Copy to group_vars/edge.yml (gitignored) and fill. Prefer ansible-vault or SOPS for the
+# private key rather than plaintext:  ansible-vault encrypt_string '<key>' --name wg_private_key
+---
+domain: example.com
+acme_email: admin@example.com
+ssh_port: 2222
+
+# WireGuard (VPS server side)
+wg_address: 10.88.0.1/24
+wg_listen_port: 51820
+wg_private_key: "REPLACE_OR_USE_VAULT"     # from `wg genkey`
+home_public_key: "REPLACE_HOME_PUBKEY"
+home_tunnel_ip: 10.88.0.2
+home_servers_cidr: 10.10.20.0/24
+
+# Public sites → home LAN upstreams (reached over the tunnel)
+caddy_sites:
+  - host: jellyfin.example.com
+    upstream: 10.10.20.11:8096
+  - host: book.example.com
+    upstream: 10.10.20.20:5678

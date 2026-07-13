@@ -72,7 +72,7 @@ flowchart TB
 
 **Why this is low-risk:** the tunnel stack (Pangolin + Newt, or WireGuard + Caddy) only needs a box with **a public IPv4 and SSH**. It's entirely provider-agnostic — nothing about it is Oracle-specific.
 
-**Keep a rebuild kit in the encrypted git repo:** a `cloud-init`/Ansible playbook + the Newt/WireGuard config + the Caddy/Pangolin compose. Rebuilding `puffingtom` on a fresh VPS is then a ~15-minute job — spin the box → run the playbook → repoint DNS → done.
+**Keep a rebuild kit in the encrypted git repo:** a `cloud-init`/Ansible playbook + the Newt/WireGuard config + the Caddy/Pangolin compose. That kit is built and lives in [`deploy/`](../deploy/), with a step-by-step [rebuild runbook](runbooks/00-tunnel-rebuild.md) and [provider notes](runbooks/01-provider-notes.md). Rebuilding `puffingtom` on a fresh VPS is then a ~15-minute job — spin the box → paste cloud-init → run the playbook → repoint DNS → done.
 
 **Cheap paid fallbacks (July 2026)** — documented insurance, *not* a cost you pay while Oracle works:
 

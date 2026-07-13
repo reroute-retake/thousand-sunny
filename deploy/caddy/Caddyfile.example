@@ -1,0 +1,28 @@
+# puffingtom (VPS) — public entry point. Automatic TLS via Let's Encrypt (HTTP-01,
+# because the VPS has a real public IP on :80/:443). Caddy reaches 10.10.20.x through
+# the WireGuard tunnel (see wireguard/wg0.conf.example AllowedIPs).
+
+{
+    email admin@example.com
+}
+
+# --- Family Jellyfin (fallback path; Tailscale P2P is primary — see doc 10) ---
+jellyfin.example.com {
+    reverse_proxy 10.10.20.11:8096
+    # preserve the real client IP for Jellyfin logs / fail2ban:
+    header_up X-Forwarded-For {remote_host}
+}
+
+# --- Lakeside booking API / n8n webhook (doc 14) ---
+book.example.com {
+    reverse_proxy 10.10.20.20:5678
+}
+
+# --- Example: gate an admin surface behind Authelia (forward-auth) ---
+# dashboard.example.com {
+#     forward_auth 10.10.20.10:9091 {
+#         uri /api/authz/forward-auth
+#         copy_headers Remote-User Remote-Groups Remote-Email
+#     }
+#     reverse_proxy 10.10.20.30:3000
+# }

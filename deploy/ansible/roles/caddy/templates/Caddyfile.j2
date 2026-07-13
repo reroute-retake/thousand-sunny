@@ -1,0 +1,10 @@
+# Managed by Ansible — public reverse proxy on puffingtom. Auto-TLS (HTTP-01).
+{
+    email {{ acme_email }}
+}
+{% for site in caddy_sites %}
+{{ site.host }} {
+    reverse_proxy {{ site.upstream }}
+    header_up X-Forwarded-For {remote_host}
+}
+{% endfor %}

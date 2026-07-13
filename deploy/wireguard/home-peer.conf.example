@@ -1,0 +1,18 @@
+# home (bartolomeo / OPNsense) side — WireGuard "client" that dials puffingtom.
+# On OPNsense you enter these values in VPN > WireGuard; this file documents them.
+
+[Interface]
+Address = 10.88.0.2/24
+PrivateKey = <HOME_PRIVATE_KEY>
+# MTU note: if streaming stalls, set MTU 1280–1380 (PMTU black-holes on CGNAT/VPS paths).
+MTU = 1360
+
+[Peer]
+PublicKey = <VPS_PUBLIC_KEY>
+Endpoint = <VPS_PUBLIC_IP>:51820
+AllowedIPs = 10.88.0.0/24
+PersistentKeepalive = 25                 # REQUIRED behind CGNAT (keeps the NAT mapping alive)
+
+# On the home side you must also:
+#  - allow the WireGuard interface to reach the Servers VLAN (OPNsense firewall rule), and
+#  - narrow it: only the VPS tunnel IP → the specific service IP:port you publish.

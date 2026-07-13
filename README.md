@@ -111,6 +111,10 @@ Wiring, VLANs and firewall rules: **[`docs/02-network.md`](docs/02-network.md)**
 
 ---
 
+### Runnable configs
+
+Beyond the docs, the repo ships a working **edge rebuild kit** in [`deploy/`](deploy/) — cloud-init bootstrap, Ansible roles (`common`/`wireguard`/`caddy`), reference WireGuard/Caddy configs, and a Pangolin+Newt alternative — with two runbooks in [`docs/runbooks/`](docs/runbooks/). It restores the CGNAT-bypass tunnel on any VPS in ~15 minutes. All values are sanitized templates; secrets stay in Vaultwarden/SOPS.
+
 ## Design principles
 
 1. **Isolate by default.** Every trust boundary is a VLAN and a firewall rule, not a hope. The cyber sandbox is a dead-end; IoT can't see your laptops.

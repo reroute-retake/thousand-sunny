@@ -2,6 +2,22 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.2.0] — 2026-07-14 — Edge rebuild kit
+
+### Added
+- **`deploy/` — a runnable `puffingtom` rebuild kit** delivering on the v1.1 "keep a rebuild kit" promise:
+  - `cloud-init/puffingtom.cloud-init.yaml` — provider-agnostic first-boot hardening (SSH key-only :2222, UFW, fail2ban, unattended-upgrades) + Docker.
+  - `ansible/` — declarative Path A (WireGuard + Caddy): `site.yml`, inventory/vars examples, and `common` / `wireguard` / `caddy` roles with Jinja templates.
+  - `wireguard/` + `caddy/` reference configs (VPS server + home-peer + Caddyfile).
+  - `pangolin/` — Path B alternative (Pangolin server compose + home Newt connector) with the doc-10 memory-cap workaround.
+  - `.env.example` — the shape of every secret (real values stay in Vaultwarden/SOPS).
+- **`docs/runbooks/00-tunnel-rebuild.md`** — the ~15-minute failover runbook (key reuse, both paths, DNS repoint, verification, MTU gotcha).
+- **`docs/runbooks/01-provider-notes.md`** — Oracle/RackNerd/Hetzner/Netcup/IONOS specifics, external-firewall gotchas, and the "insist on a dedicated IPv4" rule.
+
+### Changed
+- [doc 10](docs/10-external-access.md) tunnel-resilience section now links the concrete kit + runbooks.
+- README gains a "Runnable configs" section; `.gitignore` extended to keep filled deploy values (`.env`, `inventory.ini`, `group_vars/edge.yml`, real `*.conf`) out of git.
+
 ## [1.1.0] — 2026-07-14 — Hardening pass (independent review)
 
 An external review validated the architecture and raised five resilience/operational gaps. All five are now addressed:

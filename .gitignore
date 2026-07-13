@@ -31,3 +31,11 @@ docker-compose.override.yml
 # ── Notes: this repo is documentation.
 # Real service configs live on the hosts and in a private, encrypted
 # repo (SOPS/age). Only sanitized examples belong here.
+
+# ── Deploy kit — commit only *.example / *.j2 templates, never filled values ──
+deploy/**/.env
+deploy/ansible/inventory.ini
+deploy/ansible/group_vars/edge.yml
+deploy/**/*.conf
+!deploy/**/*.conf.example
+deploy/pangolin/config/

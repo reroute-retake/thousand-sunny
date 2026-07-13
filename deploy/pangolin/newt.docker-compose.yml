@@ -1,0 +1,14 @@
+# home (LAN) — Path B: Newt connector. Dials OUT to Pangolin on puffingtom (CGNAT-safe).
+# Get NEWT_ID / NEWT_SECRET from the Pangolin dashboard when you register this site.
+# Run this on a small always-on home host (e.g. an LXC on poneglyph).
+
+services:
+  newt:
+    image: fosrl/newt:1.13
+    container_name: newt
+    restart: unless-stopped
+    environment:
+      - PANGOLIN_ENDPOINT=${PANGOLIN_ENDPOINT}   # https://dashboard.example.com
+      - NEWT_ID=${NEWT_ID}
+      - NEWT_SECRET=${NEWT_SECRET}
+    # Newt needs to reach your LAN services (e.g. 10.10.20.11:8096); run it where it can.

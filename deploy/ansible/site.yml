@@ -1,0 +1,13 @@
+---
+# Rebuild the puffingtom edge (Path A: WireGuard + Caddy).
+# Usage:
+#   ansible-galaxy collection install -r requirements.yml
+#   ansible-playbook site.yml
+- name: Rebuild puffingtom edge tunnel + reverse proxy
+  hosts: edge
+  become: true
+  roles:
+    - common      # hardening, ufw, ip_forward, fail2ban
+    - wireguard   # wg0 server; home dials in
+    - caddy       # public TLS reverse proxy over the tunnel
+  # For Path B (Pangolin) instead, skip this playbook and use deploy/pangolin/.
