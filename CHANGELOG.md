@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.8.0] — 2026-07-14 — Runbooks index
+
+### Added
+- **`docs/runbooks/README.md`** — an index of all 7 runbooks with one-line summaries and a **recommended build order** (switch VLANs → Proxmox bootstrap → core services + stacks → OpenWrt AP → home firewall/tunnel → bare-metal restore), including a Mermaid build-order diagram. Linked from the main README.
+
 ## [1.7.2] — 2026-07-14 — markdown-lint green
 
 ### Fixed
