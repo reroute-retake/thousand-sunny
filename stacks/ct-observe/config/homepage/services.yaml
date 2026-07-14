@@ -3,6 +3,8 @@
 # siteMonitor pings the internal IP:port directly for reliable up/down status.
 # API "widget:" blocks are commented — uncomment after setting the matching HOMEPAGE_VAR_* in .env.
 
+# NOTE: mgmt-VLAN siteMonitors (OPNsense/AdGuard 10.10.10.1, Proxmox 10.10.10.2) require the
+# narrow "VLAN 20 → Mgmt" monitoring exception in docs/02-network.md — without it they show offline.
 - Network:
     - OPNsense:
         href: https://opnsense.sunny.home
@@ -18,10 +20,10 @@
         href: https://proxmox.sunny.home
         description: Hypervisor (poneglyph)
         icon: proxmox.png
-        siteMonitor: https://10.10.20.2:8006
+        siteMonitor: https://10.10.10.2:8006
         # widget:
         #   type: proxmox
-        #   url: https://10.10.20.2:8006
+        #   url: https://10.10.10.2:8006
         #   username: api@pam!homepage
         #   password: {{HOMEPAGE_VAR_PROXMOX_TOKEN}}
 

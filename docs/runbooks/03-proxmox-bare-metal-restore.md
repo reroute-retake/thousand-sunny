@@ -17,7 +17,7 @@ flowchart LR
 Grab the **[break-glass](../11-security.md#break-glass--offline-credentials)** copy: Proxmox root, ZFS passphrase, and (if needed) OPNsense root — because Vaultwarden/Authelia are *down* until `ct-proxy` is restored.
 
 ## Steps
-1. **Reinstall Proxmox VE** (9.2) from USB onto the replacement NVMe. If mirroring, select both SSDs as a ZFS mirror for `rpool` now (so this never recurs). Set the same hostname/IP (`10.10.20.2`).
+1. **Reinstall Proxmox VE** (9.2) from USB onto the replacement NVMe. If mirroring, select both SSDs as a ZFS mirror for `rpool` now (so this never recurs). Set the same hostname/IP — the Proxmox **host mgmt interface is on VLAN 10 (`10.10.10.2`)**, with guest containers bridged onto VLAN 20.
 2. **Import the data pool:**
    ```bash
    zpool import               # list importable pools

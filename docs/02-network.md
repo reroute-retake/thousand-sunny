@@ -79,6 +79,25 @@ flowchart TB
 ```
 `impeldown` gets internet only when you flip an alias/schedule — and **that rule auto-disables after 1 hour** (an OPNsense time-based schedule, or the n8n flow in [doc 12](12-automation.md#4-sandbox-internet-auto-off)), so a *forgotten* toggle can't leave the sandbox online. A detonated sample can't phone home by default, and can *never* pivot into Servers or Mgmt. Detail: [13 · impeldown labs](13-impeldown-labs.md). Exact OPNsense steps: [runbook 02](runbooks/02-opnsense-wireguard.md).
 
+### Monitoring and reverse-proxy exception: VLAN 20 to Mgmt
+
+The matrix blocks Servers (20) → Mgmt (10) — correct — but two VLAN-20 hosts have a *legitimate, narrow* need to reach mgmt web UIs:
+- **`ct-proxy` (10.10.20.9)** proxies `proxmox.sunny.home` (and other mgmt UIs) — its Caddy must reach them.
+- **`ct-observe` (10.10.20.16)** runs the Homepage `siteMonitor` / Proxmox-widget checks for the dashboard.
+
+> [!NOTE]
+> The **Proxmox *host* management interface is on VLAN 10 (`10.10.10.2`)**; its *guest containers* are on VLAN 20 (`10.10.20.x`). So even reaching the Proxmox UI from a Servers-VLAN host crosses into Mgmt.
+
+Add a **single least-privilege pass rule** on the Servers (VLAN 20) interface, *above* the block-to-Mgmt rule:
+
+| Action | Source | Destination | Ports | Purpose |
+|---|---|---|---|---|
+| Pass | `10.10.20.9`, `10.10.20.16` | `10.10.10.1` (OPNsense / AdGuard) | `443`, `3000` | proxy + monitor firewall/DNS UIs |
+| Pass | `10.10.20.9`, `10.10.20.16` | `10.10.10.2` (Proxmox) | `8006` | proxy + monitor the hypervisor |
+| Block | `VLAN20 net` | `10.10.10.0/24` | any | everything else Servers→Mgmt stays blocked |
+
+Without this, those `siteMonitor` checks (and the `proxmox.sunny.home` route) silently time out and show **offline** — a classic homelab trap. Keep it this narrow: two source IPs, three ports, nothing else.
+
 ## `sabaody` (TL-SG108E) config — avoid the classic traps
 
 > [!WARNING]

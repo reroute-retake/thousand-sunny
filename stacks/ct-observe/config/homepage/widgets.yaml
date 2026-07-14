@@ -11,8 +11,11 @@
       timeStyle: short
       hourCycle: h23
 
+# NOTE: this shows the ct-observe CONTAINER/LXC view (systeminformation inside Docker),
+# NOT the poneglyph hypervisor's full RAM/CPU. For real host stats, use the Proxmox
+# widget in services.yaml (needs a token + the VLAN 20→Mgmt monitoring exception, doc 02).
 - resources:
-    label: poneglyph
+    label: ct-observe
     cpu: true
     memory: true
     disk: /

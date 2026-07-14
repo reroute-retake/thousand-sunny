@@ -34,7 +34,7 @@ flowchart LR
 ```
 
 - **`crowsnest`** runs an *external* Uptime Kuma/Gatus so you learn about an outage the way your family does — from outside the house. It also watches the **tunnel/`puffingtom` liveness** (early warning if Oracle reclaims the free instance → trigger the [fallback runbook](10-external-access.md#tunnel-resilience--provider-fallback)) and flags a **stale config-backup** if no commit has landed in N days.
-- **Homepage** is the human landing page (`home.sunny.home`) with live widgets (Jellyfin now-playing, *arr queues, disk, CPU) and links to every service by name.
+- **Homepage** is the human landing page (`home.sunny.home`) with live widgets (Jellyfin now-playing, *arr queues, disk, CPU) and links to every service by name. Its `resources` widget shows the **`ct-observe` container's** view (not the hypervisor's) — use the Proxmox widget for host stats. Its `siteMonitor` checks of mgmt-VLAN devices (OPNsense/AdGuard/Proxmox) need the narrow [VLAN 20→Mgmt exception](02-network.md#monitoring-and-reverse-proxy-exception-vlan-20-to-mgmt).
 
 ## LLM-based anomaly / issue detection
 

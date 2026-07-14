@@ -2,6 +2,15 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.3] — 2026-07-14 — Monitoring fixes (review)
+
+### Fixed
+- **Proxmox IP corrected `10.10.20.2` → `10.10.10.2`** across the Homepage config, `ct-proxy` Caddyfile, [doc 05](docs/05-core-services.md), and the [restore runbook](docs/runbooks/03-proxmox-bare-metal-restore.md) — the Proxmox *host* mgmt interface is on VLAN 10 per [doc 02](docs/02-network.md), while its guest containers are VLAN 20.
+- **Homepage `resources` widget relabeled `poneglyph` → `ct-observe`** — it reflects the container/LXC view, not the hypervisor; documented using the Proxmox widget for real host stats.
+
+### Added
+- **VLAN 20 → Mgmt monitoring/reverse-proxy exception** ([doc 02](docs/02-network.md#monitoring-and-reverse-proxy-exception-vlan-20-to-mgmt)) — a narrow, two-source/three-port pass rule so `ct-observe` `siteMonitor` checks and the `proxmox.sunny.home` route can reach mgmt UIs without opening Servers→Mgmt generally. Cross-referenced from docs 05 and 09 and the Homepage config. Prevents the "everything on VLAN 10 shows offline" trap.
+
 ## [1.4.2] — 2026-07-14 — Homepage dashboard starter
 
 ### Added

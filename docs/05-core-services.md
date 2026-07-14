@@ -51,10 +51,13 @@ immich.sunny.home     { reverse_proxy 10.10.20.12:2283 }
 git.sunny.home        { reverse_proxy 10.10.20.15:3000 }
 proxmox.sunny.home {
     forward_auth 10.10.20.9:9091 { uri /api/authz/forward-auth }   # Authelia
-    reverse_proxy https://10.10.20.2:8006 { transport http { tls_insecure_skip_verify } }
+    reverse_proxy https://10.10.10.2:8006 { transport http { tls_insecure_skip_verify } }  # Proxmox mgmt = VLAN 10
 }
 ```
 Internal certs via Caddy's `internal` CA (trust the root on family devices) or Let's Encrypt **DNS-01** for a real domain.
+
+> [!NOTE]
+> The `proxmox.sunny.home` route points at the Proxmox mgmt UI on **VLAN 10 (`10.10.10.2:8006`)** while `ct-proxy` itself is on VLAN 20 — so it depends on the narrow [VLAN 20→Mgmt exception](02-network.md#monitoring-and-reverse-proxy-exception-vlan-20-to-mgmt). Same rule the dashboard's mgmt `siteMonitor` checks need.
 
 ## Identity & secrets
 - **Authelia**: `one_factor` for low-risk apps (Jellyfin has its own login), `two_factor` (TOTP/WebAuthn) for admin surfaces (Proxmox, OPNsense, Dockge, n8n).

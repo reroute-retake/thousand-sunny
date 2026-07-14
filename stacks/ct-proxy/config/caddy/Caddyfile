@@ -34,7 +34,7 @@ jellyfin.sunny.home {
 # --- Admin surfaces: gate with Authelia MFA ---
 proxmox.sunny.home {
 	import authelia
-	reverse_proxy https://10.10.20.2:8006 {
+	reverse_proxy https://10.10.10.2:8006 {   # Proxmox host mgmt is on VLAN 10
 		transport http {
 			tls_insecure_skip_verify
 		}
