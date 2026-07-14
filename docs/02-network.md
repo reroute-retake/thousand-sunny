@@ -113,6 +113,9 @@ Without this, those `siteMonitor` checks (and the `proxmox.sunny.home` route) si
 | 3 → Xbox | Access | 40 | — |
 | 4 → riser (hall) | **Trunk** | 10 | 30,60 |
 | 5 → riser (study) | **Trunk** | 10 | 20,30,40,50 |
+| 6 → `poneglyph` | **Trunk (all-tagged)** | 1 | 10,20 |
+
+> Full port maps for **both** switches (incl. `waterseven` and the `poneglyph` all-tagged trunk) plus the untagged-VLAN-1 step-by-step: **[runbook 05](runbooks/05-switch-vlan-config.md)**.
 
 ## DNS: names, not IPs
 

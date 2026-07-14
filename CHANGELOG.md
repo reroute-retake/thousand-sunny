@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.5.0] — 2026-07-14 — Switch VLAN runbook
+
+### Added
+- **`docs/runbooks/05-switch-vlan-config.md`** — exact 802.1Q port maps for `sabaody` (TL-SG108E) and `waterseven` (TL-SG105E), the `poneglyph` VLAN 10+20 all-tagged trunk (with the native-VLAN rationale vs the other trunks), and the ordered **untagged-VLAN-1 gotcha** procedure (membership vs PVID, escape hatch, mgmt-VLAN-last, firmware/CVE + config backup). Cross-linked from [doc 02](docs/02-network.md), whose `sabaody` table now includes the `poneglyph` port.
+
 ## [1.4.5] — 2026-07-14 — Bootstrap template fix (review)
 
 ### Fixed
