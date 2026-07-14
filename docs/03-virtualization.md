@@ -63,6 +63,7 @@ flowchart TD
 - **Tags & pools:** tag guests by VLAN/role; a Proxmox pool per domain for quota visibility.
 - **Snapshots before upgrades:** every stack is snapshotted pre-update; rollback in seconds ([11 · ops](11-security.md)).
 - **Compose files:** ready-to-run, sanitized per-stack compose lives in [`stacks/`](../stacks/) — one folder per grouped LXC in this table, with `mem_limit`/`cpus` set to these budgets and image tags pinned to [doc 16](16-versions.md).
+- **Bootstrap:** first-time Proxmox install + VLAN-aware bridge (host mgmt on VLAN 10, guests tagged VLAN 20) + ZFS mirror + base template are in [runbook 04](runbooks/04-proxmox-vlan-bootstrap.md).
 - **IaC option:** the whole layout is reproducible with Terraform (`bpg/proxmox`) + Ansible if you want to show that in the portfolio.
 
 Next: **[04 · Storage & backup →](04-storage.md)**

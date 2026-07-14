@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.4] — 2026-07-14 — Proxmox bootstrap runbook
+
+### Added
+- **`docs/runbooks/04-proxmox-vlan-bootstrap.md`** — first-time `poneglyph` build: Proxmox VE 9.2 install, a VLAN-aware `vmbr0` with the **host mgmt on VLAN 10 (`10.10.10.2`)** and **guest NICs tagged to VLAN 20**, the `tank` ZFS mirror (+ ARC cap and datasets), a **hardened unprivileged Docker-in-LXC base template**, first-guest clone, and the VLAN 20→Mgmt monitoring exception. Cross-linked from [doc 03](docs/03-virtualization.md) and [runbook 03](docs/runbooks/03-proxmox-bare-metal-restore.md).
+
 ## [1.4.3] — 2026-07-14 — Monitoring fixes (review)
 
 ### Fixed
