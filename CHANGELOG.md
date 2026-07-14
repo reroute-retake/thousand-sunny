@@ -2,6 +2,14 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.7.0] — 2026-07-14 — CI validation
+
+### Added
+- **GitHub Actions `validate` workflow** (`.github/workflows/validate.yml`), on push/PR: **markdownlint** (markdownlint-cli2), **Mermaid** diagram parse (mermaid-cli), **yamllint**, **`docker compose config`** across every `stacks/` + `deploy/pangolin/` file, an **internal link + heading-anchor** check (`scripts/check-internal-links.py`, GitHub-compatible slugs), and an **advisory external-link** check (lychee). Tuned configs `.markdownlint.jsonc` + `.yamllint.yml`; helper `scripts/extract-mermaid.py`. **CI badge** added to the README.
+
+### Changed
+- `stacks/ct-media/docker-compose.yml` rewritten **without YAML merge keys** (`<<:`) so `docker compose config` validates across all Compose versions — identical behaviour (same images/limits/volumes/env).
+
 ## [1.6.1] — 2026-07-14 — denden SSID→VLAN mapping (review)
 
 ### Changed

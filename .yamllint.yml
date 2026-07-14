@@ -1,0 +1,18 @@
+extends: relaxed
+
+rules:
+  line-length: disable
+  truthy: disable
+  document-start: disable
+  empty-lines: disable
+  indentation: disable
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+  comments-indentation: disable
+  trailing-spaces: enable
+
+# Jinja templates aren't valid YAML; cloud-init requires a spaceless `#cloud-config` header
+ignore: |
+  **/*.j2
+  deploy/cloud-init/

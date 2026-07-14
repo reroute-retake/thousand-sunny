@@ -4,6 +4,7 @@
 
 ### A self-hosted homelab that sails the Grand Line of self-hosting — networking, storage, media, local AI, security, and automation, all running from home.
 
+[![validate](https://github.com/reroute-retake/thousand-sunny/actions/workflows/validate.yml/badge.svg)](https://github.com/reroute-retake/thousand-sunny/actions/workflows/validate.yml)
 ![Status](https://img.shields.io/badge/status-in%20build-yellow)
 ![Hypervisor](https://img.shields.io/badge/hypervisor-Proxmox%20VE%209.2-e57000)
 ![Firewall](https://img.shields.io/badge/firewall-OPNsense%2026.1-d94f00)

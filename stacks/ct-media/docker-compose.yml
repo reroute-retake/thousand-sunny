@@ -3,19 +3,15 @@
 # pin to a digest in production. Caddy on bartolomeo proxies names → this LXC's IP:port.
 name: ct-media
 
-x-common: &common
-  restart: unless-stopped
-  environment: &env
-    PUID: ${PUID}
-    PGID: ${PGID}
-    TZ: ${TZ}
-
 services:
   jellyfin:
-    <<: *common
     image: lscr.io/linuxserver/jellyfin:10.11.11
     container_name: jellyfin
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     devices:
       - /dev/dri:/dev/dri          # iGPU (VAAPI) transcoding — LXC must pass it through
     volumes:
@@ -26,9 +22,13 @@ services:
     cpus: 4.0
 
   seerr:
-    <<: *common
     image: ghcr.io/seerr/seerr:3.3.0   # verify image path at docs.seerr.dev (Overseerr+Jellyseerr merge)
     container_name: seerr
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/seerr:/app/config
     ports: ["5055:5055"]
@@ -36,10 +36,13 @@ services:
     cpus: 1.0
 
   radarr:
-    <<: *common
     image: lscr.io/linuxserver/radarr:6.3.0
     container_name: radarr
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/radarr:/config
       - ${MEDIA}:/data/media
@@ -48,10 +51,13 @@ services:
     cpus: 2.0
 
   sonarr:
-    <<: *common
     image: lscr.io/linuxserver/sonarr:4.0.19
     container_name: sonarr
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/sonarr:/config
       - ${MEDIA}:/data/media
@@ -60,10 +66,13 @@ services:
     cpus: 2.0
 
   prowlarr:
-    <<: *common
     image: lscr.io/linuxserver/prowlarr:2.5.0
     container_name: prowlarr
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/prowlarr:/config
     ports: ["9696:9696"]
@@ -71,10 +80,13 @@ services:
     cpus: 1.0
 
   bazarr:
-    <<: *common
     image: lscr.io/linuxserver/bazarr:1.6.0
     container_name: bazarr
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/bazarr:/config
       - ${MEDIA}:/data/media
@@ -83,10 +95,13 @@ services:
     cpus: 1.0
 
   sabnzbd:
-    <<: *common
     image: lscr.io/linuxserver/sabnzbd:5.0.4
     container_name: sabnzbd
-    environment: *env
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     volumes:
       - ${APPDATA}/sabnzbd:/config
       - ${MEDIA}/downloads:/data/downloads
@@ -95,12 +110,14 @@ services:
     cpus: 2.0
 
   decypharr:
-    <<: *common
     # AllDebrid → *arr bridge (qBittorrent-emulation + WebDAV/rclone mount). See github.com/sirrobot01/decypharr
     image: ghcr.io/sirrobot01/decypharr:latest   # pin to a released tag once chosen
     container_name: decypharr
+    restart: unless-stopped
     environment:
-      <<: *env
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
       ALLDEBRID_API_KEY: ${ALLDEBRID_API_KEY}
     volumes:
       - ${APPDATA}/decypharr:/app

@@ -1,0 +1,23 @@
+{
+  // Thousand Sunny docs are hand-written long-form with GitHub-flavored extras
+  // (alerts, inline HTML in the README, emoji, tables). Keep structural rules on;
+  // disable the stylistic ones that don't fit long-form technical docs.
+  "default": true,
+  "MD001": false, // heading increment (we jump levels intentionally)
+  "MD012": false, // multiple consecutive blank lines
+  "MD013": false, // line length
+  "MD024": false, // duplicate headings (CHANGELOG "Added"/"Changed"/"Fixed", "Verify", etc.)
+  "MD026": false, // trailing punctuation in heading ("...for the hall?")
+  "MD028": false, // blank line inside blockquote (GitHub alerts)
+  "MD029": false, // ordered list item prefix
+  "MD033": false, // inline HTML (README <div>/<br/>/<sub>)
+  "MD034": false, // bare URLs
+  "MD036": false, // emphasis used instead of heading
+  "MD040": false, // fenced code language (some illustrative blocks are language-less)
+  "MD041": false, // first line in file should be a top-level heading (README starts with <div>)
+  "MD007": false, // unordered list indentation (nested lists inside GitHub alerts)
+  "MD022": false, // blanks around headings (cosmetic spacing)
+  "MD031": false, // blanks around fenced code (cosmetic spacing)
+  "MD032": false, // blanks around lists (cosmetic spacing)
+  "MD058": false  // blanks around tables (cosmetic spacing)
+}
