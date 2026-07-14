@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.6.0] — 2026-07-14 — denden OpenWrt runbook
+
+### Added
+- **`docs/runbooks/06-denden-openwrt.md`** — flash the Archer AC1750 to OpenWrt and run it as a VLAN-aware **dumb AP** (Option A of the denden trap): exact model/rev verification, factory flash + **TFTP recovery** fallback, dumb-AP conversion (no DHCP/WAN/firewall), **DSA `bridge-vlan`** config matching `sabaody` port 5 (native VLAN 30, tagged 10/20/40/50; `vegapunk` untagged VLAN 20; mgmt VLAN 10), SSID→VLAN mapping, verification incl. the **"no mgmt on Wi-Fi"** check, and failsafe/TFTP rollback. Linked from [doc 01](docs/01-fleet.md) and [runbook 05](docs/runbooks/05-switch-vlan-config.md).
+
 ## [1.5.1] — 2026-07-14 — denden AP trunk trap (review)
 
 ### Fixed

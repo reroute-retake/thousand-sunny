@@ -65,7 +65,7 @@ flowchart LR
 |---|---|
 | **Role** | Wi-Fi **access point** (not router) on the first floor, fed by the study riser; `vegapunk` plugs into its LAN port |
 | **⚠️ VLAN trap** | **Stock firmware is NOT 802.1Q-aware** — fed a trunk it bridges the untagged native VLAN onto Wi-Fi and drops tagged frames. So the riser sends **native VLAN 30 (never Mgmt)**, and a stock `denden` would still drop `vegapunk`'s VLAN-20 tags. **OpenWrt is effectively required** for the VLAN design to survive the AP. |
-| **Fix options** | **A:** flash **OpenWrt** — per-SSID VLANs + an untagged VLAN-20 port for `vegapunk` (recommended). **B:** add a small upstairs switch (`skypiea`) to break out the trunk. **C:** make the riser an access port on VLAN 30 (all upstairs on Trusted). Detail: [runbook 05 · the denden trap](runbooks/05-switch-vlan-config.md#the-denden-ap-trunk-trap). |
+| **Fix options** | **A:** flash **[OpenWrt](runbooks/06-denden-openwrt.md)** — per-SSID VLANs + an untagged VLAN-20 port for `vegapunk` (recommended). **B:** add a small upstairs switch (`skypiea`) to break out the trunk. **C:** make the riser an access port on VLAN 30 (all upstairs on Trusted). Detail: [runbook 05 · the denden trap](runbooks/05-switch-vlan-config.md#the-denden-ap-trunk-trap). |
 
 ---
 

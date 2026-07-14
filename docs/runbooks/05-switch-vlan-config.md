@@ -62,7 +62,7 @@ Two rules the port-5 config above already enforces, whichever fix you choose:
 | **B — upstairs switch** | stock | Trunk: native/PVID **30**, tagged **20,40,50** → a small TL-SG105E upstairs | switch: `vegapunk` = untagged VLAN 20 access; `denden` uplink = untagged VLAN 30 access | Full isolation with a stock AP; +₹1,500–2,000 (mirrors `waterseven`; call it `skypiea`). |
 | **C — access port** *(compromise)* | stock | **Access: PVID 30, untagged 30 only** | everything upstairs (Wi-Fi + `vegapunk`) on VLAN 30 | Works instantly on stock firmware; **loses** upstairs IoT-Wi-Fi isolation and `vegapunk` is on Trusted, not Servers. |
 
-**Recommendation: A** if `denden` is OpenWrt-flashable (Archer C7/A7-class — verify at [openwrt.org](https://openwrt.org/toh/start)); it needs no new hardware and keeps `vegapunk` on VLAN 20. Otherwise **B** for full isolation with stock firmware, or **C** to just work today. The design assumes **A** — see [doc 01](../01-fleet.md) (`denden` requires OpenWrt for the VLANs to survive the AP).
+**Recommendation: A** if `denden` is OpenWrt-flashable (Archer C7/A7-class — verify at [openwrt.org](https://openwrt.org/toh/start)); it needs no new hardware and keeps `vegapunk` on VLAN 20 — **step-by-step in [runbook 06](06-denden-openwrt.md)**. Otherwise **B** for full isolation with stock firmware, or **C** to just work today. The design assumes **A** — see [doc 01](../01-fleet.md) (`denden` requires OpenWrt for the VLANs to survive the AP).
 
 ## The untagged-VLAN-1 gotcha — do it in THIS order
 
