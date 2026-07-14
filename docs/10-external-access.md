@@ -47,7 +47,7 @@ flowchart TB
 ## Secondary / portfolio: Pangolin + Newt on `puffingtom`
 - **`bartolomeo` initiates an outbound WireGuard tunnel** to `puffingtom` (CGNAT blocks inbound, never outbound). `PersistentKeepalive = 25`.
 - **Pangolin** (Traefik-based, GUI + SSO + per-resource rules) publishes chosen services on a real domain with auto-TLS. It's "Cloudflare Tunnel, self-hosted and ToS-free."
-- OPNsense firewall rule limits the tunnel to **only** the specific service IPs/ports — a compromised VPS can't roam the LAN.
+- OPNsense firewall rule limits the tunnel to **only** the specific service IPs/ports — a compromised VPS can't roam the LAN. Step-by-step home-side config: [runbook 02](runbooks/02-opnsense-wireguard.md).
 
 > [!WARNING]
 > **Pangolin memory leak on tiny VPS:** cap the container (`mem_limit: 700m`, `restart: unless-stopped`). With Oracle's post-Jun-2026 **2 OCPU / 12 GB** free ceiling shared across `puffingtom`+`crowsnest`, set this deliberately.

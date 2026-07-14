@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.1] — 2026-07-14 — OPNsense home-side runbook
+
+### Added
+- **`docs/runbooks/02-opnsense-wireguard.md`** — the home-side OPNsense config: the outbound WireGuard client interface (no default-gateway hijack, MTU note), the narrow tunnel→Jellyfin firewall rule (with a `ct-proxy` hand-off variant), the VLAN-60 sandbox rules with a **1-hour auto-off** (native Schedule + n8n firewall-API toggle with a cron fail-safe), and Servers-VLAN routing. Cross-linked from [doc 02](docs/02-network.md) and [doc 10](docs/10-external-access.md).
+
 ## [1.4.0] — 2026-07-14 — Hardening pass #2 (architecture review)
 
 A second review flagged four architecture risks; all addressed.

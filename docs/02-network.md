@@ -77,7 +77,7 @@ flowchart TB
 3. block in  from 10.10.60.0/24 to any   # default no internet…
 4. pass  in  from 10.10.60.0/24 to any   # …enabled ONLY via a toggle that AUTO-EXPIRES after 1h (doc 12)
 ```
-`impeldown` gets internet only when you flip an alias/schedule — and **that rule auto-disables after 1 hour** (an OPNsense time-based schedule, or the n8n flow in [doc 12](12-automation.md#4-sandbox-internet-auto-off)), so a *forgotten* toggle can't leave the sandbox online. A detonated sample can't phone home by default, and can *never* pivot into Servers or Mgmt. Detail: [13 · impeldown labs](13-impeldown-labs.md).
+`impeldown` gets internet only when you flip an alias/schedule — and **that rule auto-disables after 1 hour** (an OPNsense time-based schedule, or the n8n flow in [doc 12](12-automation.md#4-sandbox-internet-auto-off)), so a *forgotten* toggle can't leave the sandbox online. A detonated sample can't phone home by default, and can *never* pivot into Servers or Mgmt. Detail: [13 · impeldown labs](13-impeldown-labs.md). Exact OPNsense steps: [runbook 02](runbooks/02-opnsense-wireguard.md).
 
 ## `sabaody` (TL-SG108E) config — avoid the classic traps
 
