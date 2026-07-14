@@ -98,7 +98,7 @@ pct start 9000
 # Harden + install Docker inside the template
 pct exec 9000 -- bash -lc '
   apt-get update && apt-get -y full-upgrade &&
-  apt-get -y install curl ca-certificates sudo unattended-upgrades qemu-guest-agent &&
+  apt-get -y install curl ca-certificates sudo unattended-upgrades &&
   dpkg-reconfigure -f noninteractive unattended-upgrades &&
   curl -fsSL https://get.docker.com | sh'
 

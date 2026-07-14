@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.5] — 2026-07-14 — Bootstrap template fix (review)
+
+### Fixed
+- Dropped `qemu-guest-agent` from the base **LXC** template in [runbook 04](docs/runbooks/04-proxmox-vlan-bootstrap.md) — it's a KVM-VM-only tool (filesystem freeze + guest exec via the QEMU channel) and is inert in containers, where Proxmox already has native host-level access.
+
 ## [1.4.4] — 2026-07-14 — Proxmox bootstrap runbook
 
 ### Added
