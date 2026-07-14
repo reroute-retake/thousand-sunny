@@ -20,5 +20,6 @@
   "MD031": false, // blanks around fenced code (cosmetic spacing)
   "MD032": false, // blanks around lists (cosmetic spacing)
   "MD058": false, // blanks around tables (cosmetic spacing)
-  "MD051": false  // link fragments — the internal-links CI job validates these with GitHub-accurate slugs; markdownlint's slugger diverges on punctuated headings (e.g. "1) ...")
+  "MD051": false, // link fragments — validated GitHub-accurately by the internal-links CI job instead
+  "MD060": false  // table-column-style (new in markdownlint 0.40) — cosmetic pipe spacing; docs use compact "|---|" delimiters
 }

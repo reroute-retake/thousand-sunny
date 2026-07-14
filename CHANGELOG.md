@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.7.2] — 2026-07-14 — markdown-lint green
+
+### Fixed
+- The `markdown-lint` first-run failure was **462× MD060 (table-column-style)** — a rule new in markdownlint v0.40 that rejects the compact `|---|` table delimiters used throughout the docs. Disabled **MD060** (cosmetic pipe-spacing), clearing every error. (The `MD051` disable from 1.7.1 is retained — harmless and redundant with the `internal-links` job — but MD060, not MD051, was the real cause.)
+
 ## [1.7.1] — 2026-07-14 — CI first-run fixes
 
 ### Fixed
