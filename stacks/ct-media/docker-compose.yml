@@ -122,6 +122,8 @@ services:
     volumes:
       - ${APPDATA}/decypharr:/app
       - ${MEDIA}:/data/media:rshared   # rshared so the rclone mount is visible to *arr
+    # NOTE: the host LXC must be created with `fuse=1` (see runbook 04) — unprivileged
+    # LXCs block /dev/fuse even with SYS_ADMIN, so the rclone mount fails without it.
     devices:
       - /dev/fuse:/dev/fuse
     cap_add: ["SYS_ADMIN"]             # required for the rclone FUSE mount

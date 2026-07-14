@@ -29,7 +29,7 @@ flowchart TD
 
 | Guest | Type | Services | vCPU | RAM | Disk (appdata) | GPU | Notes |
 |---|---|---|---:|---:|---:|:--:|---|
-| `ct-media` | Docker-LXC | Jellyfin, Seerr, Radarr, Sonarr, Prowlarr, Bazarr, SABnzbd, Decypharr | 6 | 6 GB | 20 GB | ✅ iGPU | Jellyfin HW transcode via `/dev/dri`; media on HDD |
+| `ct-media` | Docker-LXC | Jellyfin, Seerr, Radarr, Sonarr, Prowlarr, Bazarr, SABnzbd, Decypharr | 6 | 6 GB | 20 GB | ✅ iGPU | Jellyfin HW transcode via `/dev/dri`; LXC needs `fuse=1` for Decypharr's rclone mount; media on HDD |
 | `ct-photos` | Docker-LXC | Immich (server + ML) | 4 | 4 GB | 30 GB | ✅ iGPU | ML can offload to `vegapunk` ([08](08-ai-llm.md)); library on HDD |
 | `ct-library` | Docker-LXC | Paperless-ngx, Kavita, Navidrome | 3 | 3 GB | 15 GB | — | Docs/books/music on HDD |
 | `ct-cloud` | Docker-LXC | Nextcloud AIO, Collabora | 4 | 4 GB | 20 GB | — | AIO is Nextcloud's official turnkey path |

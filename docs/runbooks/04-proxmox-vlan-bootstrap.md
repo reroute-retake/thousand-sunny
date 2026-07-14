@@ -88,7 +88,7 @@ pveam download local debian-13-standard_*_amd64.tar.zst
 
 # Unprivileged + nesting/keyctl so Docker runs inside the LXC (doc 03)
 pct create 9000 local:vztmpl/debian-13-standard_*_amd64.tar.zst \
-  --hostname base-tmpl --unprivileged 1 --features nesting=1,keyctl=1 \
+  --hostname base-tmpl --unprivileged 1 --features nesting=1,keyctl=1,fuse=1 \
   --cores 2 --memory 1024 --swap 512 \
   --rootfs local-zfs:8 \
   --net0 name=eth0,bridge=vmbr0,tag=20,ip=dhcp \
@@ -107,6 +107,7 @@ pct template 9000                 # freeze as a reusable template
 ```
 - **SSH:** drop your public key into `/root/.ssh/authorized_keys` (or a `sunny` sudo user) and set `PasswordAuthentication no` before templating.
 - **iGPU stacks** (`ct-media`, `ct-photos`): after cloning, pass `/dev/dri` into the container (Proxmox `dev0:` passthrough or an `lxc.mount.entry`) — see [doc 03](../03-virtualization.md).
+- **FUSE (`ct-media`/Decypharr):** the `fuse=1` feature above is **required** — unprivileged LXCs block `/dev/fuse` even with `SYS_ADMIN`, so Decypharr's `rclone` mount fails without it. `fuse=1` maps the device in and inherits to every clone of this template.
 
 ## 5 · First guest on VLAN 20
 ```bash

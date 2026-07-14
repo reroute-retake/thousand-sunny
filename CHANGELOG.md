@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.8.1] — 2026-07-14 — FUSE in unprivileged LXC (review)
+
+### Fixed
+- **`ct-media` Decypharr rclone mount would fail on the unprivileged LXC.** Proxmox blocks `/dev/fuse` in unprivileged containers even with `SYS_ADMIN`, so the base LXC template in [runbook 04](docs/runbooks/04-proxmox-vlan-bootstrap.md) now sets `--features nesting=1,keyctl=1,fuse=1` (inherits to all clones). Added a point-of-use note in `stacks/ct-media/docker-compose.yml` and the [doc 03](docs/03-virtualization.md) resource table.
+
 ## [1.8.0] — 2026-07-14 — Runbooks index
 
 ### Added
