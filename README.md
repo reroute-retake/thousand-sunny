@@ -113,7 +113,11 @@ Wiring, VLANs and firewall rules: **[`docs/02-network.md`](docs/02-network.md)**
 
 ### Runnable configs
 
-Beyond the docs, the repo ships a working **edge rebuild kit** in [`deploy/`](deploy/) — cloud-init bootstrap, Ansible roles (`common`/`wireguard`/`caddy`), reference WireGuard/Caddy configs, and a Pangolin+Newt alternative — with two runbooks in [`docs/runbooks/`](docs/runbooks/). It restores the CGNAT-bypass tunnel on any VPS in ~15 minutes. All values are sanitized templates; secrets stay in Vaultwarden/SOPS.
+Beyond the docs, the repo ships runnable, sanitized templates:
+- **Per-service Docker stacks** in [`stacks/`](stacks/) (`ct-media`, `ct-photos`, `ct-library`, `ct-cloud`, `ct-automation`, `ct-observe`) — image tags pinned to the [version matrix](docs/16-versions.md) and `mem_limit`/`cpus` matching the [virtualization plan](docs/03-virtualization.md).
+- **Edge rebuild kit** in [`deploy/`](deploy/) — cloud-init bootstrap, Ansible roles (`common`/`wireguard`/`caddy`), reference WireGuard/Caddy configs, and a Pangolin+Newt alternative — with two runbooks in [`docs/runbooks/`](docs/runbooks/) that restore the CGNAT-bypass tunnel on any VPS in ~15 minutes.
+
+All values are sanitized templates; secrets stay in Vaultwarden/SOPS (`.env` is git-ignored).
 
 ## Design principles
 

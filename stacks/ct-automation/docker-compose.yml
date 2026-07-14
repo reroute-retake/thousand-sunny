@@ -1,0 +1,40 @@
+# ct-automation — doc 03 budget: 2 vCPU / 2 GB.
+# n8n (workflows: Telegram YouTube-toggle, movie pipeline, reminders — doc 12) + ntfy (push).
+name: ct-automation
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:1.117.3     # doc 16: 1.117.x
+    container_name: n8n
+    restart: unless-stopped
+    environment:
+      GENERIC_TIMEZONE: ${TZ}
+      TZ: ${TZ}
+      N8N_HOST: ${N8N_HOST}
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: ${WEBHOOK_URL}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      N8N_RUNNERS_ENABLED: "true"
+    volumes:
+      - ${APPDATA}/n8n:/home/node/.n8n
+    ports: ["5678:5678"]
+    mem_limit: 1200m
+    cpus: 1.5
+
+  ntfy:
+    image: binwiederhier/ntfy:2.13.0
+    container_name: ntfy
+    restart: unless-stopped
+    command: ["serve"]
+    environment:
+      TZ: ${TZ}
+      NTFY_BASE_URL: ${NTFY_BASE_URL}
+      NTFY_CACHE_FILE: /var/lib/ntfy/cache.db
+      NTFY_AUTH_FILE: /var/lib/ntfy/auth.db
+      NTFY_AUTH_DEFAULT_ACCESS: deny-all       # private instance; grant per-topic
+    volumes:
+      - ${APPDATA}/ntfy:/var/lib/ntfy
+    ports: ["8081:80"]
+    mem_limit: 256m
+    cpus: 0.5

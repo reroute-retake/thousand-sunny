@@ -2,6 +2,21 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.3.0] — 2026-07-14 — Docker stacks
+
+### Added
+- **`stacks/` — runnable per-service Docker compose**, one folder per grouped LXC from [doc 03](docs/03-virtualization.md), each with a sanitized `.env.example`:
+  - `ct-media` — Jellyfin, Seerr, Radarr, Sonarr, Prowlarr, Bazarr, SABnzbd, Decypharr (iGPU passthrough; AllDebrid via Decypharr FUSE mount).
+  - `ct-photos` — Immich (server + machine-learning + valkey + VectorChord Postgres), iGPU-ready.
+  - `ct-library` — Paperless-ngx (+redis/postgres/gotenberg/tika, with optional LiteLLM auto-tagging), Kavita, Navidrome.
+  - `ct-cloud` — Nextcloud All-in-One mastercontainer.
+  - `ct-automation` — n8n + ntfy.
+  - `ct-observe` — Homepage, Uptime Kuma, Beszel(+agent), Grafana, Loki, Alloy — with working `loki-config.yml` and a Docker-log `config.alloy` pipeline (the substrate for the doc-09 LLM anomaly digest).
+- Image tags pinned to the [version matrix](docs/16-versions.md); per-service `mem_limit`/`cpus` sized to each LXC's doc-03 budget.
+
+### Changed
+- README "Runnable configs" and [doc 03](docs/03-virtualization.md) now link `stacks/`.
+
 ## [1.2.0] — 2026-07-14 — Edge rebuild kit
 
 ### Added

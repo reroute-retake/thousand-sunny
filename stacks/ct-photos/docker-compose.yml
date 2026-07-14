@@ -1,0 +1,53 @@
+# ct-photos — doc 03 budget: 4 vCPU / 4 GB / iGPU.
+# Based on Immich's official compose (immich.app/docs). Confirm the exact DB image pin
+# for v3.0.2 from the upstream compose — the VectorChord/pgvecto-rs tag changes per release.
+# Heavy ML can offload to vegapunk's GPU instead of the poneglyph iGPU (doc 08).
+name: ct-photos
+
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION}
+    container_name: immich-server
+    env_file: [.env]
+    devices:
+      - /dev/dri:/dev/dri            # iGPU for HW-accelerated transcode/thumbnails
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    ports: ["2283:2283"]
+    depends_on: [redis, database]
+    restart: unless-stopped
+    mem_limit: 1536m
+    cpus: 3.0
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION}
+    container_name: immich-ml
+    env_file: [.env]
+    volumes:
+      - model-cache:/cache
+    restart: unless-stopped
+    mem_limit: 1536m
+    cpus: 3.0
+
+  redis:
+    image: docker.io/valkey/valkey:8-bookworm
+    container_name: immich-redis
+    restart: unless-stopped
+    mem_limit: 256m
+
+  database:
+    # Use the exact image the official v3.0.2 compose pins (Immich ships its own pgvector/VectorChord build).
+    image: ghcr.io/immich-app/postgres:16-vectorchord   # confirm exact tag from immich.app/docs
+    container_name: immich-db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+    restart: unless-stopped
+    mem_limit: 1g
+
+volumes:
+  model-cache:

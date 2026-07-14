@@ -1,0 +1,102 @@
+# ct-library — doc 03 budget: 3 vCPU / 3 GB (tight; the 32 GB upgrade gives headroom).
+# Paperless-ngx (webserver + redis + postgres + gotenberg + tika) · Kavita · Navidrome.
+name: ct-library
+
+services:
+  # ---- Paperless-ngx (docs.paperless-ngx.com) ----
+  paperless-redis:
+    image: docker.io/library/redis:7
+    container_name: paperless-redis
+    restart: unless-stopped
+    volumes: [redisdata:/data]
+    mem_limit: 200m
+
+  paperless-db:
+    image: docker.io/library/postgres:16
+    container_name: paperless-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: ${PAPERLESS_DB_PASSWORD}
+    volumes:
+      - ${APPDATA}/paperless/pgdata:/var/lib/postgresql/data
+    mem_limit: 512m
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15
+    container_name: paperless
+    restart: unless-stopped
+    depends_on: [paperless-db, paperless-redis, gotenberg, tika]
+    ports: ["8000:8000"]
+    environment:
+      PAPERLESS_REDIS: redis://paperless-redis:6379
+      PAPERLESS_DBHOST: paperless-db
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_URL: ${PAPERLESS_URL}
+      PAPERLESS_TIME_ZONE: ${TZ}
+      PAPERLESS_OCR_LANGUAGE: eng
+      USERMAP_UID: ${PUID}
+      USERMAP_GID: ${PGID}
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      # --- Optional local-LLM auto-tagging (doc 08): point at LiteLLM, no cloud ---
+      # PAPERLESS_AI_LLM_BACKEND: openai-like
+      # PAPERLESS_AI_LLM_API_URL: http://litellm.sunny.home:4000/v1
+      # PAPERLESS_AI_LLM_MODEL: local-chat
+    volumes:
+      - ${APPDATA}/paperless/data:/usr/src/paperless/data
+      - ${DOCS}/media:/usr/src/paperless/media
+      - ${DOCS}/export:/usr/src/paperless/export
+      - ${DOCS}/consume:/usr/src/paperless/consume
+    mem_limit: 1g
+    cpus: 2.0
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:8
+    container_name: paperless-gotenberg
+    restart: unless-stopped
+    command: ["gotenberg", "--chromium-disable-javascript=true", "--chromium-allow-list=file:///tmp/.*"]
+    mem_limit: 320m
+
+  tika:
+    image: docker.io/apache/tika:latest
+    container_name: paperless-tika
+    restart: unless-stopped
+    mem_limit: 400m
+
+  # ---- Kavita (books/comics/manga) ----
+  kavita:
+    image: lscr.io/linuxserver/kavita:0.9.0.2
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - ${APPDATA}/kavita:/config
+      - ${BOOKS}:/data
+    ports: ["5000:5000"]
+    mem_limit: 384m
+
+  # ---- Navidrome (music, Subsonic API) ----
+  navidrome:
+    image: deluan/navidrome:0.63.2
+    container_name: navidrome
+    restart: unless-stopped
+    environment:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info
+      ND_BASEURL: ""
+    user: "${PUID}:${PGID}"
+    volumes:
+      - ${APPDATA}/navidrome:/data
+      - ${MUSIC}:/music:ro
+    ports: ["4533:4533"]
+    mem_limit: 384m
+
+volumes:
+  redisdata:

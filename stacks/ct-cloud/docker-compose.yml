@@ -1,0 +1,27 @@
+# ct-cloud — doc 03 budget: 4 vCPU / 4 GB.
+# Nextcloud All-in-One: ONE mastercontainer manages the rest (DB, Redis, Collabora,
+# Talk, etc.) via the Docker socket — do NOT add those services here yourself.
+# The LXC needs Docker available; if unprivileged, enable nesting (features: nesting=1).
+# Setup UI: https://<lxc-ip>:8080  →  then point Caddy at APACHE_PORT (11000).
+name: ct-cloud
+
+services:
+  nextcloud-aio-mastercontainer:
+    image: nextcloud/all-in-one:latest      # AIO self-updates the components it manages
+    container_name: nextcloud-aio-mastercontainer   # required exact name
+    restart: always
+    ports:
+      - "8080:8080"                          # AIO admin interface (first-run setup)
+    environment:
+      APACHE_PORT: ${APACHE_PORT}            # public entry Caddy proxies to
+      APACHE_IP_BINDING: 0.0.0.0
+      NEXTCLOUD_DATADIR: ${NEXTCLOUD_DATADIR}
+      TZ: ${TZ}
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # AIO's managed containers consume the rest of the 4 GB budget; give the LXC 4 GB.
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer      # required exact name

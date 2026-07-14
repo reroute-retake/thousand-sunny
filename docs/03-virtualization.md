@@ -61,6 +61,7 @@ flowchart TD
 - **Templates:** one hardened Debian 13 LXC template → clone for each stack. Consistent base = easy patching.
 - **Tags & pools:** tag guests by VLAN/role; a Proxmox pool per domain for quota visibility.
 - **Snapshots before upgrades:** every stack is snapshotted pre-update; rollback in seconds ([11 · ops](11-security.md)).
+- **Compose files:** ready-to-run, sanitized per-stack compose lives in [`stacks/`](../stacks/) — one folder per grouped LXC in this table, with `mem_limit`/`cpus` set to these budgets and image tags pinned to [doc 16](16-versions.md).
 - **IaC option:** the whole layout is reproducible with Terraform (`bpg/proxmox`) + Ansible if you want to show that in the portfolio.
 
 Next: **[04 · Storage & backup →](04-storage.md)**

@@ -1,0 +1,85 @@
+# ct-observe — doc 03 budget: 3 vCPU / 3 GB.
+# Homepage (front door) · Uptime Kuma · Beszel(+agent) · Grafana · Loki · Alloy.
+# Loki+Alloy are the substrate for the LLM anomaly digest (doc 09).
+name: ct-observe
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v1.13.2
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS}
+    volumes:
+      - ${APPDATA}/homepage:/app/config          # self-inits defaults on first run
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports: ["3000:3000"]
+    mem_limit: 256m
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.4.0
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - ${APPDATA}/uptime-kuma:/app/data
+    ports: ["3001:3001"]
+    mem_limit: 320m
+
+  beszel:
+    image: henrygd/beszel:0.18.7
+    container_name: beszel
+    restart: unless-stopped
+    volumes:
+      - ${APPDATA}/beszel:/beszel_data
+    ports: ["8090:8090"]
+    mem_limit: 256m
+
+  beszel-agent:
+    image: henrygd/beszel-agent:0.18.7
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      KEY: ${BESZEL_AGENT_KEY}
+      LISTEN: "45876"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    mem_limit: 128m
+
+  grafana:
+    image: grafana/grafana:13.1.0
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_SERVER_ROOT_URL: https://grafana.sunny.home
+    volumes:
+      - ${APPDATA}/grafana:/var/lib/grafana
+    ports: ["3002:3000"]
+    mem_limit: 512m
+
+  loki:
+    image: grafana/loki:3.7.3
+    container_name: loki
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/loki-config.yml"]
+    volumes:
+      - ./config/loki:/etc/loki
+      - ${APPDATA}/loki:/loki
+    ports: ["3100:3100"]
+    mem_limit: 768m
+
+  alloy:
+    image: grafana/alloy:v1.17.1
+    container_name: alloy
+    restart: unless-stopped
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+    volumes:
+      - ./config/alloy:/etc/alloy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports: ["12345:12345"]
+    mem_limit: 320m
+    depends_on: [loki]

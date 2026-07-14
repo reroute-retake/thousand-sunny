@@ -1,0 +1,113 @@
+# ct-media — doc 03 budget: 6 vCPU / 6 GB / iGPU passthrough.
+# Image tags = version matrix (doc 16). LinuxServer tags can differ from upstream;
+# pin to a digest in production. Caddy on bartolomeo proxies names → this LXC's IP:port.
+name: ct-media
+
+x-common: &common
+  restart: unless-stopped
+  environment: &env
+    PUID: ${PUID}
+    PGID: ${PGID}
+    TZ: ${TZ}
+
+services:
+  jellyfin:
+    <<: *common
+    image: lscr.io/linuxserver/jellyfin:10.11.11
+    container_name: jellyfin
+    environment: *env
+    devices:
+      - /dev/dri:/dev/dri          # iGPU (VAAPI) transcoding — LXC must pass it through
+    volumes:
+      - ${APPDATA}/jellyfin:/config
+      - ${MEDIA}:/data/media
+    ports: ["8096:8096"]
+    mem_limit: 2g
+    cpus: 4.0
+
+  seerr:
+    <<: *common
+    image: ghcr.io/seerr/seerr:3.3.0   # verify image path at docs.seerr.dev (Overseerr+Jellyseerr merge)
+    container_name: seerr
+    volumes:
+      - ${APPDATA}/seerr:/app/config
+    ports: ["5055:5055"]
+    mem_limit: 512m
+    cpus: 1.0
+
+  radarr:
+    <<: *common
+    image: lscr.io/linuxserver/radarr:6.3.0
+    container_name: radarr
+    environment: *env
+    volumes:
+      - ${APPDATA}/radarr:/config
+      - ${MEDIA}:/data/media
+    ports: ["7878:7878"]
+    mem_limit: 512m
+    cpus: 2.0
+
+  sonarr:
+    <<: *common
+    image: lscr.io/linuxserver/sonarr:4.0.19
+    container_name: sonarr
+    environment: *env
+    volumes:
+      - ${APPDATA}/sonarr:/config
+      - ${MEDIA}:/data/media
+    ports: ["8989:8989"]
+    mem_limit: 512m
+    cpus: 2.0
+
+  prowlarr:
+    <<: *common
+    image: lscr.io/linuxserver/prowlarr:2.5.0
+    container_name: prowlarr
+    environment: *env
+    volumes:
+      - ${APPDATA}/prowlarr:/config
+    ports: ["9696:9696"]
+    mem_limit: 256m
+    cpus: 1.0
+
+  bazarr:
+    <<: *common
+    image: lscr.io/linuxserver/bazarr:1.6.0
+    container_name: bazarr
+    environment: *env
+    volumes:
+      - ${APPDATA}/bazarr:/config
+      - ${MEDIA}:/data/media
+    ports: ["6767:6767"]
+    mem_limit: 512m
+    cpus: 1.0
+
+  sabnzbd:
+    <<: *common
+    image: lscr.io/linuxserver/sabnzbd:5.0.4
+    container_name: sabnzbd
+    environment: *env
+    volumes:
+      - ${APPDATA}/sabnzbd:/config
+      - ${MEDIA}/downloads:/data/downloads
+    ports: ["8080:8080"]
+    mem_limit: 1g
+    cpus: 2.0
+
+  decypharr:
+    <<: *common
+    # AllDebrid → *arr bridge (qBittorrent-emulation + WebDAV/rclone mount). See github.com/sirrobot01/decypharr
+    image: ghcr.io/sirrobot01/decypharr:latest   # pin to a released tag once chosen
+    container_name: decypharr
+    environment:
+      <<: *env
+      ALLDEBRID_API_KEY: ${ALLDEBRID_API_KEY}
+    volumes:
+      - ${APPDATA}/decypharr:/app
+      - ${MEDIA}:/data/media:rshared   # rshared so the rclone mount is visible to *arr
+    devices:
+      - /dev/fuse:/dev/fuse
+    cap_add: ["SYS_ADMIN"]             # required for the rclone FUSE mount
+    ports: ["8282:8282"]
+    mem_limit: 512m
+    cpus: 1.0
