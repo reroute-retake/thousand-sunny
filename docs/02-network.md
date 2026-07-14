@@ -13,7 +13,7 @@ flowchart TB
     subgraph TV [" 📺 TV Room "]
         BART["🛡️ bartolomeo<br/>OPNsense · NIC1=WAN · NIC2=LAN trunk"]
         SAB["🔀 sabaody · TL-SG108E"]
-        BRAVIA["📺 Bravia 55\" (VLAN 40)"]
+        BRAVIA["📺 Bravia 55-inch (VLAN 40)"]
         XBOX["🎮 Xbox One (VLAN 40)"]
         BART -->|trunk 2.5G| SAB
         SAB --> BRAVIA
@@ -34,8 +34,8 @@ flowchart TB
         DEN --> VEGA
     end
 
-    SAB ==>|riser: trunk| SW2
-    SAB ==>|riser: trunk| DEN
+    SAB ==>|riser trunk| SW2
+    SAB ==>|riser trunk| DEN
 ```
 
 > [!IMPORTANT]

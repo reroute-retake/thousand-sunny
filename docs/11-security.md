@@ -71,7 +71,7 @@ Every device's config is versioned into the **SOPS/age-encrypted private git rep
 flowchart LR
     WATCH["What's Up Docker / Renovate<br/>(notify only)"] --> SNAP["ZFS/Proxmox snapshot"]
     SNAP --> STAGE["update one stack"]
-    STAGE --> VERIFY{healthy?<br/>(Uptime Kuma + logs)}
+    STAGE --> VERIFY{"healthy?<br/>(Uptime Kuma + logs)"}
     VERIFY -->|yes| KEEP["keep · note version in doc 16"]
     VERIFY -->|no| ROLL["rollback snapshot (seconds)"]
 ```

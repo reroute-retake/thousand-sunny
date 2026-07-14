@@ -2,6 +2,13 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.7.1] — 2026-07-14 — CI first-run fixes
+
+### Fixed
+- **Mermaid** (2 diagrams): removed a backslash-escaped quote in the [network topology](docs/02-network.md) (`Bravia 55\"` → `55-inch`) and quoted a parenthesised decision node in the [ops upgrade flow](docs/11-security.md) — both were Mermaid parse errors.
+- **markdown-lint**: disabled `MD051` (link-fragments) — the `internal-links` job already validates fragments with GitHub-accurate slugs, and markdownlint's slugger diverges on punctuated headings.
+- **external-links** (advisory): added `.lycheeignore` for `docs.paperless-ngx.com`, which bot-blocks link checkers with HTTP 403 (the link itself is valid).
+
 ## [1.7.0] — 2026-07-14 — CI validation
 
 ### Added
