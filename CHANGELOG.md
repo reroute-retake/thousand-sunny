@@ -2,6 +2,14 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.2] — 2026-07-14 — Homepage dashboard starter
+
+### Added
+- **`stacks/ct-observe/config/homepage/`** — starter Homepage config (`settings.yaml`, `services.yaml` grouped by stack incl. `ct-proxy`, `widgets.yaml`, `bookmarks.yaml`) referencing every Thousand Sunny service by its `*.sunny.home` name, with `siteMonitor` up/down checks and commented API-widget blocks keyed via `HOMEPAGE_VAR_*`.
+
+### Changed
+- `stacks/ct-observe/docker-compose.yml` — Homepage binds the committed `./config/homepage` and reads `.env` for `HOMEPAGE_VAR_*`; `.env.example` gains those placeholders.
+
 ## [1.4.1] — 2026-07-14 — OPNsense home-side runbook
 
 ### Added

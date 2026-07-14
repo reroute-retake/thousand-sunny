@@ -1,0 +1,36 @@
+---
+- Project:
+    - Repo:
+        - abbr: TS
+          href: https://github.com/reroute-retake/thousand-sunny
+    - Docs:
+        - abbr: DOC
+          href: https://github.com/reroute-retake/thousand-sunny/tree/main/docs
+    - Runbooks:
+        - abbr: RB
+          href: https://github.com/reroute-retake/thousand-sunny/tree/main/docs/runbooks
+
+- Admin:
+    - Proxmox:
+        - abbr: PVE
+          href: https://proxmox.sunny.home
+    - OPNsense:
+        - abbr: FW
+          href: https://opnsense.sunny.home
+    - Dockge:
+        - abbr: DK
+          href: https://dockge.sunny.home
+
+- Reference:
+    - Jellyfin docs:
+        - abbr: JF
+          href: https://jellyfin.org/docs/
+    - Immich docs:
+        - abbr: IM
+          href: https://immich.app/docs
+    - TRaSH Guides:
+        - abbr: TR
+          href: https://trash-guides.info/
+    - Proxmox wiki:
+        - abbr: PW
+          href: https://pve.proxmox.com/wiki/

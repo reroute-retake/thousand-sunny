@@ -1,0 +1,165 @@
+---
+# Thousand Sunny services, grouped by stack (doc 03). hrefs use *.sunny.home (ct-proxy Caddy);
+# siteMonitor pings the internal IP:port directly for reliable up/down status.
+# API "widget:" blocks are commented — uncomment after setting the matching HOMEPAGE_VAR_* in .env.
+
+- Network:
+    - OPNsense:
+        href: https://opnsense.sunny.home
+        description: Firewall · routing · DNS (bartolomeo)
+        icon: opnsense.png
+        siteMonitor: https://10.10.10.1
+    - AdGuard Home:
+        href: http://10.10.10.1:3000
+        description: DNS filtering + Unbound
+        icon: adguard-home.png
+        siteMonitor: http://10.10.10.1:3000
+    - Proxmox:
+        href: https://proxmox.sunny.home
+        description: Hypervisor (poneglyph)
+        icon: proxmox.png
+        siteMonitor: https://10.10.20.2:8006
+        # widget:
+        #   type: proxmox
+        #   url: https://10.10.20.2:8006
+        #   username: api@pam!homepage
+        #   password: {{HOMEPAGE_VAR_PROXMOX_TOKEN}}
+
+- ct-proxy:
+    - Vaultwarden:
+        href: https://vault.sunny.home
+        description: Password vault
+        icon: vaultwarden.png
+        siteMonitor: http://10.10.20.9:8222
+    - Authelia:
+        href: https://auth.sunny.home
+        description: SSO + MFA
+        icon: authelia.png
+        siteMonitor: http://10.10.20.9:9091
+    - CrowdSec:
+        href: https://github.com/reroute-retake/thousand-sunny/blob/main/docs/11-security.md
+        description: IPS (LAPI 8080 · OPNsense bouncer)
+        icon: crowdsec.png
+        siteMonitor: http://10.10.20.9:8080
+
+- ct-media:
+    - Jellyfin:
+        href: https://jellyfin.sunny.home
+        description: Media server
+        icon: jellyfin.png
+        siteMonitor: http://10.10.20.11:8096
+        # widget:
+        #   type: jellyfin
+        #   url: http://10.10.20.11:8096
+        #   key: {{HOMEPAGE_VAR_JELLYFIN_KEY}}
+        #   enableBlocks: true
+    - Seerr:
+        href: https://seerr.sunny.home
+        description: Requests (Overseerr+Jellyseerr)
+        icon: jellyseerr.png
+        siteMonitor: http://10.10.20.11:5055
+    - Radarr:
+        href: https://radarr.sunny.home
+        description: Movies
+        icon: radarr.png
+        siteMonitor: http://10.10.20.11:7878
+        # widget:
+        #   type: radarr
+        #   url: http://10.10.20.11:7878
+        #   key: {{HOMEPAGE_VAR_RADARR_KEY}}
+    - Sonarr:
+        href: https://sonarr.sunny.home
+        description: TV
+        icon: sonarr.png
+        siteMonitor: http://10.10.20.11:8989
+        # widget:
+        #   type: sonarr
+        #   url: http://10.10.20.11:8989
+        #   key: {{HOMEPAGE_VAR_SONARR_KEY}}
+    - Prowlarr:
+        href: https://prowlarr.sunny.home
+        description: Indexers
+        icon: prowlarr.png
+        siteMonitor: http://10.10.20.11:9696
+    - Bazarr:
+        href: https://bazarr.sunny.home
+        description: Subtitles
+        icon: bazarr.png
+        siteMonitor: http://10.10.20.11:6767
+    - SABnzbd:
+        href: https://sabnzbd.sunny.home
+        description: Usenet downloader
+        icon: sabnzbd.png
+        siteMonitor: http://10.10.20.11:8080
+    - Decypharr:
+        href: https://decypharr.sunny.home
+        description: AllDebrid → *arr bridge
+        icon: mdi-cloud-download-outline
+        siteMonitor: http://10.10.20.11:8282
+
+- ct-photos:
+    - Immich:
+        href: https://immich.sunny.home
+        description: Photos & video (AI search)
+        icon: immich.png
+        siteMonitor: http://10.10.20.12:2283
+
+- ct-library:
+    - Paperless-ngx:
+        href: https://paperless.sunny.home
+        description: Documents (OCR + AI tags)
+        icon: paperless-ngx.png
+        siteMonitor: http://10.10.20.13:8000
+    - Kavita:
+        href: https://kavita.sunny.home
+        description: Books · comics · manga
+        icon: kavita.png
+        siteMonitor: http://10.10.20.13:5000
+    - Navidrome:
+        href: https://navidrome.sunny.home
+        description: Music (Subsonic)
+        icon: navidrome.png
+        siteMonitor: http://10.10.20.13:4533
+
+- ct-cloud:
+    - Nextcloud:
+        href: https://nextcloud.sunny.home
+        description: Files · calendar · office
+        icon: nextcloud.png
+        siteMonitor: http://10.10.20.14:11000
+
+- ct-git:
+    - Forgejo:
+        href: https://git.sunny.home
+        description: Git forge + Actions
+        icon: forgejo.png
+        siteMonitor: http://10.10.20.15:3000
+
+- ct-automation:
+    - n8n:
+        href: https://n8n.sunny.home
+        description: Workflows (Telegram, reminders)
+        icon: n8n.png
+        siteMonitor: http://10.10.20.20:5678
+    - ntfy:
+        href: https://ntfy.sunny.home
+        description: Push notifications
+        icon: ntfy.png
+        siteMonitor: http://10.10.20.20:8081
+
+- ct-observe:
+    - Grafana:
+        href: https://grafana.sunny.home
+        description: Dashboards + Loki logs
+        icon: grafana.png
+        siteMonitor: http://10.10.20.16:3002
+    - Uptime Kuma:
+        href: https://uptime.sunny.home
+        description: Uptime & status
+        icon: uptime-kuma.png
+        siteMonitor: http://10.10.20.16:3001
+    - Beszel:
+        href: https://beszel.sunny.home
+        description: Host & Docker metrics
+        icon: beszel.png
+        siteMonitor: http://10.10.20.16:8090

@@ -1,0 +1,28 @@
+---
+# Top info widgets.
+- greeting:
+    text_size: 4xl
+    text: "🌞 Thousand Sunny"
+
+- datetime:
+    text_size: xl
+    format:
+      dateStyle: medium
+      timeStyle: short
+      hourCycle: h23
+
+- resources:
+    label: poneglyph
+    cpu: true
+    memory: true
+    disk: /
+
+# Optional: pull live status from the external watcher (crowsnest) or Uptime Kuma.
+# - uptimekuma:
+#     url: http://10.10.20.16:3001
+#     slug: thousand-sunny
+
+- search:
+    provider: duckduckgo
+    focus: false
+    target: _blank

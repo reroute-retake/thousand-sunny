@@ -1,0 +1,43 @@
+---
+# Homepage settings — Thousand Sunny front door (home.sunny.home)
+title: Thousand Sunny
+favicon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/gethomepage.png
+theme: dark
+color: slate
+headerStyle: clean
+target: _blank
+
+# Group display order + layout. Names MUST match the groups in services.yaml.
+layout:
+  Network:
+    style: row
+    columns: 3
+  ct-proxy:
+    style: row
+    columns: 4
+  ct-media:
+    style: row
+    columns: 4
+  ct-photos:
+    style: row
+    columns: 4
+  ct-library:
+    style: row
+    columns: 4
+  ct-cloud:
+    style: row
+    columns: 4
+  ct-git:
+    style: row
+    columns: 4
+  ct-automation:
+    style: row
+    columns: 4
+  ct-observe:
+    style: row
+    columns: 4
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: false
+  showSearchSuggestions: true
