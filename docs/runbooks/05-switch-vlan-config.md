@@ -10,7 +10,7 @@ flowchart LR
     SAB -->|"access 40"| TV["Bravia"]
     SAB -->|"access 40"| XB["Xbox"]
     SAB -->|"trunk 1u · 10t·20t"| PONE["poneglyph<br/>Proxmox"]
-    SAB -->|"trunk 10u · 20·30·40·50t"| STUDY["riser → study<br/>(denden · vegapunk)"]
+    SAB -->|"trunk 30u · 10·20·40·50t ⚠️"| STUDY["riser → study<br/>denden — needs VLAN-aware AP"]
     SAB -->|"trunk 10u · 30·60t"| WS["waterseven<br/>TL-SG105E (hall)"]
     WS -->|"access 30"| CHOP["chopper"]
     WS -->|"access 60"| IMP["impeldown"]
@@ -24,7 +24,7 @@ flowchart LR
 | 2 | Sony Bravia | Access | 40 | 40 | — |
 | 3 | Xbox One | Access | 40 | 40 | — |
 | 4 | Riser → hall (`waterseven`) | Trunk (native mgmt) | 10 | 10 | 30,60 |
-| 5 | Riser → study (`denden` / `vegapunk`) | Trunk (native mgmt) | 10 | 10 | 20,30,40,50 |
+| 5 | Riser → study (`denden`) | Trunk ⚠️ *needs VLAN-aware AP* | 30 | 30 | 10,20,40,50 |
 | 6 | `poneglyph` (Proxmox) | **Trunk (all-tagged)** | 1 | 1 | **10,20** |
 | 7 | *(spare)* | Access | 1 | 1 | — |
 | 8 | **Admin escape hatch** | Access | 1 | 1 | — |
@@ -46,6 +46,23 @@ The other trunks carry VLAN 10 **untagged** (native), because OPNsense/`watersev
 - Its port is therefore **tagged in both 10 and 20**, and its native/PVID is the **dead VLAN 1**, so any stray *untagged* frame lands in the unused parking VLAN and goes nowhere (a small hardening win).
 - VLAN membership — not tagging style — is what bridges traffic: `poneglyph` (tagged VLAN 10) and `bartolomeo` (untagged VLAN 10) are both members of VLAN 10, so they talk fine.
 - If you'd rather match the others (native-mgmt untagged), set port 6 to PVID 10 / untagged 10 / tagged 20 **and** move the host IP from `vmbr0.10` to `vmbr0` in runbook 04. Pick one style; don't half-do it.
+
+## The `denden` AP trunk trap
+
+> [!WARNING]
+> A **stock** Archer AC1750 in AP mode is **not 802.1Q-aware**. Fed a trunk it will (1) bridge the **untagged native VLAN straight onto the Wi-Fi radios**, and (2) often **drop tagged frames**. If the native were VLAN 10, every upstairs Wi-Fi client would land on **Management** (Proxmox/OPNsense UIs exposed!), and `vegapunk`'s VLAN-20 tags would never arrive.
+
+Two rules the port-5 config above already enforces, whichever fix you choose:
+- The riser's **untagged/native VLAN is 30 (Trusted), never 10 (Mgmt)** — a leak is then merely "trusted," not admin.
+- **Mgmt (10) is only ever tagged**, so it only reaches `denden` if the AP is genuinely VLAN-aware.
+
+| Option | `denden` firmware | `sabaody` port 5 | `denden` / `vegapunk` wiring | Result |
+|---|---|---|---|---|
+| **A — OpenWrt** *(recommended)* | OpenWrt | Trunk: native/PVID **30**, tagged **10,20,40,50** | SSIDs → VLAN 30/40/50; `vegapunk`'s LAN port = **untagged VLAN 20**; AP mgmt = VLAN 10 tagged | Full per-SSID isolation; `vegapunk` stays on the Servers VLAN. No new hardware. |
+| **B — upstairs switch** | stock | Trunk: native/PVID **30**, tagged **20,40,50** → a small TL-SG105E upstairs | switch: `vegapunk` = untagged VLAN 20 access; `denden` uplink = untagged VLAN 30 access | Full isolation with a stock AP; +₹1,500–2,000 (mirrors `waterseven`; call it `skypiea`). |
+| **C — access port** *(compromise)* | stock | **Access: PVID 30, untagged 30 only** | everything upstairs (Wi-Fi + `vegapunk`) on VLAN 30 | Works instantly on stock firmware; **loses** upstairs IoT-Wi-Fi isolation and `vegapunk` is on Trusted, not Servers. |
+
+**Recommendation: A** if `denden` is OpenWrt-flashable (Archer C7/A7-class — verify at [openwrt.org](https://openwrt.org/toh/start)); it needs no new hardware and keeps `vegapunk` on VLAN 20. Otherwise **B** for full isolation with stock firmware, or **C** to just work today. The design assumes **A** — see [doc 01](../01-fleet.md) (`denden` requires OpenWrt for the VLANs to survive the AP).
 
 ## The untagged-VLAN-1 gotcha — do it in THIS order
 

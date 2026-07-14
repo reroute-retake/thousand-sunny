@@ -53,7 +53,7 @@ No service rename, no client reconfig — everything still points at `litellm.su
 | 5 | **`impeldown` Vega 8 iGPU + 16 GB** | No PS3/PS4/Switch; no big AD labs | Heavy emulation on a dGPU box; cloud CTF platforms |
 | 6 | **`bartolomeo` only 2 NICs** | One WAN + one LAN trunk | Fine — VLANs on `sabaody` do the rest |
 | 7 | **`sabaody` 8 ports** | TV-room + 2 risers fill it | Add a small VLAN switch in the hall (needed anyway for `impeldown` isolation) |
-| 8 | **AC1750 (`denden`) per-SSID VLANs** | May not tag SSID→VLAN | Upgrade trigger: Omada EAP / OpenWrt AP |
+| 8 | **`denden` AC1750 not VLAN-aware (stock)** | Untagged mgmt would leak to Wi-Fi; `vegapunk` VLAN-20 tags dropped | Flash OpenWrt (recommended), add an upstairs switch, or access-port VLAN 30 ([runbook 05](runbooks/05-switch-vlan-config.md#the-denden-ap-trunk-trap)) |
 | 9 | **Oracle free tier volatility** (halved Jun 2026; can reclaim idle) | 2 OCPU/12 GB; risk of losing the tunnel entirely | Cap Pangolin RAM; keep roles lean; **provider-agnostic fallback to RackNerd/Hetzner + 15-min rebuild kit** ([10](10-external-access.md#tunnel-resilience--provider-fallback)) |
 | 10 | **Home upload speed** | Real cap on concurrent remote streams | Measure; set Jellyfin bitrate cap ~70% ([10](10-external-access.md)) |
 | 11 | **`poneglyph` boot NVMe (`rpool`) SPOF** | NVMe death = hypervisor down (bare-metal restore) | Mirror `rpool` with a 2nd SSD, or accept ~1–3 h RTO ([04](04-storage.md), [runbook](runbooks/03-proxmox-bare-metal-restore.md)) |
@@ -68,6 +68,7 @@ No service rename, no client reconfig — everything still points at `litellm.su
 | 🔴 P1 · Day-0 | RAM for `poneglyph` 16→32 GB | Crucial CT16G56C46S5 (DDR5-5600 SODIMM) | ₹5,300–6,500 |
 | 🔴 P1 · Day-0 | 2nd NAS drive (mirror) | Seagate IronWolf ST4000VN006 *or* WD Red Plus WD40EFPX | ₹9,000–11,500 |
 | 🟠 P2 | Hall VLAN switch `waterseven` — enables `impeldown` isolation | TP-Link TL-SG105E (or 2nd TL-SG108E) | ₹1,500–2,000 |
+| 🟢 P3 | Upstairs VLAN switch `skypiea` — only if NOT flashing `denden` to OpenWrt (Option B) | TP-Link TL-SG105E | ₹1,500–2,000 |
 | 🟠 P2 | UPS for NAS + network | APC BX600I-IN (600 VA) or BR1000G-IN (1000 VA) | ₹2,700–12,400 |
 | 🟢 P4 | Extra NVMe (appdata headroom) | WD Black SN7100 / Crucial P310 1 TB | ₹15,700–22,000 |
 | 🟢 P4 | Off-site backup disk | External 4 TB USB (rotate off-site) | ₹9,000–11,000 |

@@ -2,6 +2,14 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.5.1] — 2026-07-14 — denden AP trunk trap (review)
+
+### Fixed
+- **Study riser (`sabaody` port 5) no longer sends Mgmt untagged.** Native/PVID changed VLAN 10 → **VLAN 30 (Trusted)**, tagged 10,20,40,50 — so a stock, non-VLAN-aware `denden` can't dump the Management VLAN onto upstairs Wi-Fi, and mgmt only ever travels tagged.
+
+### Added
+- **"The `denden` AP trunk trap"** in [runbook 05](docs/runbooks/05-switch-vlan-config.md#the-denden-ap-trunk-trap) — the stock-firmware VLAN gotcha (untagged→Wi-Fi leak, dropped 802.1Q tags) with three fixes: A) OpenWrt (recommended), B) an upstairs switch (`skypiea`), C) access-port VLAN 30. Reflected in [doc 01](docs/01-fleet.md) (`denden` flags OpenWrt as effectively required), [doc 02](docs/02-network.md) (port-5 native = 30), and [doc 15](docs/15-roadmap.md) (limitation #8 + optional `skypiea` shopping row).
+
 ## [1.5.0] — 2026-07-14 — Switch VLAN runbook
 
 ### Added

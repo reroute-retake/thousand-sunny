@@ -112,10 +112,12 @@ Without this, those `siteMonitor` checks (and the `proxmox.sunny.home` route) si
 | 2 → Bravia | Access | 40 | — |
 | 3 → Xbox | Access | 40 | — |
 | 4 → riser (hall) | **Trunk** | 10 | 30,60 |
-| 5 → riser (study) | **Trunk** | 10 | 20,30,40,50 |
+| 5 → riser (study, `denden`) | **Trunk** ⚠️ | 30 | 10,20,40,50 |
 | 6 → `poneglyph` | **Trunk (all-tagged)** | 1 | 10,20 |
 
-> Full port maps for **both** switches (incl. `waterseven` and the `poneglyph` all-tagged trunk) plus the untagged-VLAN-1 step-by-step: **[runbook 05](runbooks/05-switch-vlan-config.md)**.
+*(Port 5's native is VLAN 30, not Mgmt — `denden` on stock firmware isn't VLAN-aware; see the denden trap in runbook 05.)*
+
+> Full port maps for **both** switches (incl. `waterseven` and the `poneglyph` all-tagged trunk), the **`denden` AP trunk trap**, and the untagged-VLAN-1 step-by-step: **[runbook 05](runbooks/05-switch-vlan-config.md)**.
 
 ## DNS: names, not IPs
 
