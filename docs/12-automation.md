@@ -56,6 +56,24 @@ flowchart LR
 - Source of truth = **Nextcloud Calendar** (CalDAV `REPORT`) so the whole family already edits it; a NocoDB table is the low-friction alternative.
 - "On June 30th there's a function" becomes an event → a T-1-day and morning-of nudge to the right people. The same pattern drives booking confirmations for the [lakeside site](14-sites-social.md).
 
+## 4) Sandbox internet auto-off
+
+`impeldown` (VLAN 60) has no internet by default ([doc 02](02-network.md#sandbox-isolation--the-exact-rule)). When you *do* enable it to grab a tool/sample, the rule must switch itself back off — humans forget, and a forgotten toggle lets detonated malware phone home.
+
+```mermaid
+flowchart LR
+    T["📱 Telegram: /sandbox-online"] --> AUTHZ{allowed chat?}
+    AUTHZ -->|yes| ON["OPNsense API:<br/>enable VLAN60→WAN rule"]
+    ON --> OK["Telegram: 'sandbox online 60m'"]
+    OK --> W["Wait 60m<br/>(or cron + expiry table)"]
+    W --> OFF["OPNsense API: disable rule"]
+    OFF --> DONE["Telegram: 'sandbox internet off'"]
+```
+
+- **Simplest (no automation):** attach an OPNsense **time-based Schedule** to the VLAN-60→WAN pass rule so it can only ever be active in a short window — it expires on its own.
+- **On-demand (n8n):** mirror the [YouTube-toggle](#1-telegram-youtube-for-30-minutes-toggle) pattern. OPNsense's REST API toggles a firewall rule/alias — enable it, `Wait` 60 min, disable it. Endpoints under `/api/firewall/filter/*` (toggle a rule by UUID) or `/api/firewall/alias/*`, with an API key/secret **scoped to firewall only**. Use the **cron + expiry-timestamp** variant so an n8n restart can't leave it stuck on.
+- **Fail-safe:** a separate n8n cron (every 5 min) asserts "if now is outside an active window, the VLAN-60→WAN rule is disabled" — belt-and-suspenders so the sandbox is *never* silently online.
+
 ## Other high-value automations
 - **Backup/scrub/cert reports** → ntfy (deterministic) + the [LLM anomaly digest](09-observability.md).
 - **New media announcements** → a family Telegram channel when something they requested arrives.

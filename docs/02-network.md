@@ -75,9 +75,9 @@ flowchart TB
 1. pass  in  proto {tcp,udp}  from 10.10.30.15 (chopper)  to 10.10.60.0/24   # only chopper reaches it
 2. block in  from 10.10.60.0/24 to { 10.10.0.0/16 }  (all RFC1918)           # nothing escapes to LAN
 3. block in  from 10.10.60.0/24 to any   # default no internet…
-4. pass  in  from 10.10.60.0/24 to any   # …enabled ONLY via a schedule/alias toggle when needed
+4. pass  in  from 10.10.60.0/24 to any   # …enabled ONLY via a toggle that AUTO-EXPIRES after 1h (doc 12)
 ```
-`impeldown` gets internet only when you flip an alias/schedule — so a detonated malware sample can't phone home by default, and can *never* pivot into Servers or Mgmt. Detail: [13 · impeldown labs](13-impeldown-labs.md).
+`impeldown` gets internet only when you flip an alias/schedule — and **that rule auto-disables after 1 hour** (an OPNsense time-based schedule, or the n8n flow in [doc 12](12-automation.md#4-sandbox-internet-auto-off)), so a *forgotten* toggle can't leave the sandbox online. A detonated sample can't phone home by default, and can *never* pivot into Servers or Mgmt. Detail: [13 · impeldown labs](13-impeldown-labs.md).
 
 ## `sabaody` (TL-SG108E) config — avoid the classic traps
 
@@ -102,7 +102,7 @@ flowchart TB
 ```mermaid
 flowchart LR
     C["client"] --> AGH["AdGuard Home<br/>(bartolomeo)"]
-    AGH -->|"*.sunny.home rewrite"| CADDY["Caddy reverse proxy"]
+    AGH -->|"*.sunny.home rewrite"| CADDY["Caddy (ct-proxy LXC)"]
     AGH -->|everything else| UNB["Unbound<br/>(recursive, DNSSEC)"]
     UNB --> ROOT["root / authoritative DNS"]
     CADDY --> SVC["service container:port"]

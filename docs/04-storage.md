@@ -29,6 +29,11 @@ flowchart TB
 > [!WARNING]
 > **A single 4 TB drive today has zero redundancy — one failure loses everything.** Adding the second 4 TB IronWolf to form a mirror is a **Day-0 blocking prerequisite: buy it before you put real data on the box.** Buy from a *different batch/retailer* to avoid correlated failure. ([15 · shopping](15-roadmap.md))
 
+> [!WARNING]
+> **The boot/app NVMe (`rpool`) is a single point of failure.** PBS backs up its *contents* nightly, but if the NVMe itself dies the hypervisor is down until rebuilt. Two options:
+> - **(A) Recommended — mirror `rpool`:** add a 2nd small NVMe/SATA SSD and install Proxmox onto a **ZFS mirror**, matching the data pool's redundancy. The N5 has spare M.2/SATA. A boot disk can then fail with zero downtime.
+> - **(B) Accept the RTO:** staying single-disk means an NVMe failure = **~1–3 h downtime** (reinstall Proxmox → `zpool import tank` → restore guests from PBS). Drill it with the [bare-metal restore runbook](runbooks/03-proxmox-bare-metal-restore.md).
+
 ### ZFS tuning for a 32 GB box
 ```bash
 # Cap ARC so containers get their RAM (put in /etc/modprobe.d/zfs.conf)

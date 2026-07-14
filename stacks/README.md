@@ -24,6 +24,7 @@ docker compose logs -f
 ## Map
 | Stack | LXC budget (doc 03) | Services |
 |---|---|---|
+| `ct-proxy` | 2 vCPU / 1.5 GB | Caddy · Authelia · Vaultwarden · CrowdSec · redis (web + identity tier — [doc 05](../docs/05-core-services.md)) |
 | `ct-media` | 6 vCPU / 6 GB / iGPU | Jellyfin · Seerr · Radarr · Sonarr · Prowlarr · Bazarr · SABnzbd · Decypharr |
 | `ct-photos` | 4 vCPU / 4 GB / iGPU | Immich (server · ML · redis · db) |
 | `ct-library` | 3 vCPU / 3 GB | Paperless-ngx (+redis/db/gotenberg/tika) · Kavita · Navidrome |

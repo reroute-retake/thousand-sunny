@@ -2,6 +2,19 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.4.0] — 2026-07-14 — Hardening pass #2 (architecture review)
+
+A second review flagged four architecture risks; all addressed.
+
+### Changed
+- **Least privilege — web/identity tier moved off the firewall.** `bartolomeo` now runs *only* routing, firewall, WireGuard, and DNS (AdGuard/Unbound). Caddy, Authelia, Vaultwarden, and CrowdSec parsing move to a new **unprivileged `ct-proxy` LXC** on `poneglyph` (VLAN 20) — a web-tier exploit no longer lands on the perimeter firewall. Rewrote [doc 05](docs/05-core-services.md); updated README (fleet + architecture diagram), [doc 01](docs/01-fleet.md), [doc 02](docs/02-network.md), [doc 03](docs/03-virtualization.md) (added `ct-proxy`, retightened the RAM budget → cap ARC ~4 GB, 64 GB comfort target), and [doc 11](docs/11-security.md) (web-tier threat row).
+- **Sandbox internet auto-off.** The VLAN-60→WAN toggle now **auto-expires after 1 hour** (OPNsense schedule or an n8n flow with a cron fail-safe) so a forgotten toggle can't let detonated malware phone home. Updated [doc 02](docs/02-network.md), [doc 13](docs/13-impeldown-labs.md); added the workflow to [doc 12](docs/12-automation.md#4-sandbox-internet-auto-off).
+
+### Added
+- **Break-glass / offline credentials** procedure ([doc 11](docs/11-security.md#break-glass--offline-credentials)) — Proxmox/OPNsense root, ZFS + backup passphrases, and identity-tier bootstrap kept in an offline KeePassXC + paper-in-safe, independent of Vaultwarden/Authelia/DNS, to prevent chicken-and-egg lockout.
+- **Boot-drive redundancy + RTO** ([doc 04](docs/04-storage.md)) — recommend mirroring `rpool` with a 2nd SSD; if single-disk, a documented ~1–3 h RTO and a new [bare-metal restore runbook](docs/runbooks/03-proxmox-bare-metal-restore.md). Added limitation #11 and a shopping row in [doc 15](docs/15-roadmap.md).
+- **`stacks/ct-proxy/`** — runnable compose for the new tier (Caddy + Authelia + Vaultwarden + redis + CrowdSec) with sanitized Caddyfile and Authelia config.
+
 ## [1.3.0] — 2026-07-14 — Docker stacks
 
 ### Added

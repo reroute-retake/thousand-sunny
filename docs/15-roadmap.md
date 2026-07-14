@@ -56,6 +56,7 @@ No service rename, no client reconfig — everything still points at `litellm.su
 | 8 | **AC1750 (`denden`) per-SSID VLANs** | May not tag SSID→VLAN | Upgrade trigger: Omada EAP / OpenWrt AP |
 | 9 | **Oracle free tier volatility** (halved Jun 2026; can reclaim idle) | 2 OCPU/12 GB; risk of losing the tunnel entirely | Cap Pangolin RAM; keep roles lean; **provider-agnostic fallback to RackNerd/Hetzner + 15-min rebuild kit** ([10](10-external-access.md#tunnel-resilience--provider-fallback)) |
 | 10 | **Home upload speed** | Real cap on concurrent remote streams | Measure; set Jellyfin bitrate cap ~70% ([10](10-external-access.md)) |
+| 11 | **`poneglyph` boot NVMe (`rpool`) SPOF** | NVMe death = hypervisor down (bare-metal restore) | Mirror `rpool` with a 2nd SSD, or accept ~1–3 h RTO ([04](04-storage.md), [runbook](runbooks/03-proxmox-bare-metal-restore.md)) |
 
 ## Shopping list (India, July 2026)
 
@@ -70,6 +71,7 @@ No service rename, no client reconfig — everything still points at `litellm.su
 | 🟠 P2 | UPS for NAS + network | APC BX600I-IN (600 VA) or BR1000G-IN (1000 VA) | ₹2,700–12,400 |
 | 🟢 P4 | Extra NVMe (appdata headroom) | WD Black SN7100 / Crucial P310 1 TB | ₹15,700–22,000 |
 | 🟢 P4 | Off-site backup disk | External 4 TB USB (rotate off-site) | ₹9,000–11,000 |
+| 🟠 P2 | Boot-drive mirror — 2nd small SSD for `rpool` | 256–512 GB NVMe/SATA SSD | ₹1,800–3,500 |
 
 **Where to buy / watch:** Amazon.in, MDComputers, PrimeABGB, Vedant Computers, TheITDepot (trusted, real warranties); **DesiDime** for deal alerts. Watch the **August Independence-Day sales** for the UPS/NVMe (not RAM — that's only going up). Buy the two NAS drives from **different batches/sellers** to avoid correlated failure.
 

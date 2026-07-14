@@ -37,7 +37,7 @@ flowchart LR
 | | |
 |---|---|
 | **Specs** | Intel N150 (4C/4T, Alder Lake-N, **AES-NI**), 16 GB, M.2 SSD, **dual 2.5 GbE** |
-| **Role** | OPNsense firewall/router · AdGuard Home + Unbound · Caddy reverse proxy · Authelia · Vaultwarden · CrowdSec |
+| **Role** | OPNsense firewall/router · AdGuard Home + Unbound DNS · WireGuard · CrowdSec firewall bouncer. **Reverse proxy, SSO, and the vault deliberately do NOT run here** — they're in the `ct-proxy` LXC on `poneglyph` ([doc 05](05-core-services.md)), keeping the firewall a firewall. |
 | **Fit** | Plenty for ~1 Gbps JIO + gigabit LAN. NAT at 1 Gbps ≈ 12–15% CPU; with IDS ≈ 45–65%. |
 | **Limits** | **Only 2 NICs**: one WAN, one LAN **trunk** carrying all tagged VLANs into `sabaody`. No QuickAssist (N150 has none) — irrelevant, AES-NI covers WireGuard. |
 | **Headroom** | Comfortable. If IDS/IPS on all VLANs ever saturates it, that's the trigger to move firewalling to a bigger box — not expected. |
@@ -74,9 +74,9 @@ flowchart LR
 | | |
 |---|---|
 | **Specs** | AMD Ryzen 7 255, **16 GB DDR5 (1 SO-DIMM slot free)**, 512 GB NVMe (boot/apps), **1× 4 TB Seagate IronWolf** |
-| **Role** | Proxmox VE 9.2 host: ZFS storage + all app containers (media, Immich, docs, git, cloud, monitoring) |
-| **Limits (important)** | ⚠️ **16 GB is the #1 constraint.** ZFS ARC + host + ~20 containers is tight. ⚠️ **A single 4 TB drive has no redundancy** — one disk failure = total loss. |
-| **Fixes (planned)** | ➕ Add a **2nd 16 GB DDR5-5600 SO-DIMM → 32 GB** (buy soon — RAM prices rising, see [15](15-roadmap.md)). ➕ Add a **2nd 4 TB IronWolf → ZFS mirror** (redundancy). |
+| **Role** | Proxmox VE 9.2 host: ZFS storage + all app containers (media, Immich, docs, git, cloud, monitoring) + the **`ct-proxy` LXC** (Caddy/Authelia/Vaultwarden — [doc 05](05-core-services.md)) |
+| **Limits (important)** | ⚠️ **16 GB is the #1 constraint.** ZFS ARC + host + ~20 containers is tight. ⚠️ **Single 4 TB drive = no redundancy.** ⚠️ **Boot/apps on one 512 GB NVMe (`rpool`) is a SPOF** — its death takes the hypervisor offline. |
+| **Fixes (planned)** | ➕ **2nd 16 GB DDR5-5600 SO-DIMM → 32 GB** (buy soon — RAM prices rising, [15](15-roadmap.md)). ➕ **2nd 4 TB IronWolf → ZFS mirror**. ➕ Optionally **mirror `rpool`** with a 2nd small NVMe/SATA SSD, or accept the documented RTO ([04](04-storage.md), [restore runbook](runbooks/03-proxmox-bare-metal-restore.md)). |
 | **Headroom** | After 32 GB + mirror it's a capable 24/7 app host. NVMe can later host a "special vdev"/L2ARC if needed. |
 
 ### 🧠 `vegapunk` — First-floor primary PC (LLM server *now*)

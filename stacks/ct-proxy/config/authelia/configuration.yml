@@ -1,0 +1,42 @@
+# Authelia 4.39 — minimal starter. Secrets come from env (see docker-compose.yml + .env).
+# You must also create ./config/users.yml (file backend) with your family accounts +
+# argon2 password hashes:  docker run --rm authelia/authelia:4.39.20 authelia crypto hash generate argon2
+# Full reference: https://www.authelia.com/configuration/prologue/introduction/
+theme: dark
+
+server:
+  address: 'tcp://0.0.0.0:9091'
+
+log:
+  level: info
+
+authentication_backend:
+  file:
+    path: /config/users.yml
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'auth.sunny.home'
+      policy: bypass
+    - domain: 'jellyfin.sunny.home'      # app has its own auth
+      policy: bypass
+    - domain: '*.sunny.home'             # everything else: MFA
+      policy: two_factor
+
+session:
+  cookies:
+    - domain: 'sunny.home'
+      authelia_url: 'https://auth.sunny.home'
+      default_redirection_url: 'https://home.sunny.home'
+  redis:
+    host: redis
+    port: 6379
+
+storage:
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt   # swap for SMTP once mail is available

@@ -1,0 +1,71 @@
+# ct-proxy — doc 03 budget: 2 vCPU / 1.5 GB. The web + identity tier, deliberately moved
+# OFF the firewall (doc 05) into an UNPRIVILEGED LXC on poneglyph (VLAN 20).
+# Caddy fronts everything; Authelia = SSO/MFA; Vaultwarden = vault; CrowdSec parses Caddy
+# logs and the OPNsense firewall bouncer enforces the decisions.
+name: ct-proxy
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${APPDATA}/caddy/data:/data
+      - ${APPDATA}/caddy/config:/config
+      - ${APPDATA}/caddy/logs:/var/log/caddy
+    depends_on: [authelia]
+    mem_limit: 256m
+
+  authelia:
+    image: authelia/authelia:4.39.20
+    container_name: authelia
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      # These map to Authelia's secret env vars (see authelia.com); shown generically here.
+      AUTHELIA_SESSION_SECRET: ${AUTHELIA_SESSION_SECRET}
+      AUTHELIA_STORAGE_ENCRYPTION_KEY: ${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET: ${AUTHELIA_JWT_SECRET}
+    volumes:
+      - ./config/authelia:/config      # configuration.yml + users.yml live here
+    ports: ["9091:9091"]
+    depends_on: [redis]
+    mem_limit: 256m
+
+  vaultwarden:
+    image: vaultwarden/server:1.36.0
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DOMAIN: https://vault.${DOMAIN}
+      SIGNUPS_ALLOWED: "false"           # invite-only after you create the family accounts
+      ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
+      TZ: ${TZ}
+    volumes:
+      - ${APPDATA}/vaultwarden:/data
+    ports: ["8222:80"]
+    mem_limit: 256m
+
+  redis:
+    image: docker.io/valkey/valkey:8-bookworm
+    container_name: authelia-redis
+    restart: unless-stopped
+    volumes:
+      - ${APPDATA}/authelia-redis:/data
+    mem_limit: 128m
+
+  crowdsec:
+    image: docker.io/crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      COLLECTIONS: "crowdsecurity/caddy crowdsecurity/base-http-scenarios"
+    volumes:
+      - ${APPDATA}/crowdsec/config:/etc/crowdsec
+      - ${APPDATA}/crowdsec/data:/var/lib/crowdsec/data
+      - ${APPDATA}/caddy/logs:/var/log/caddy:ro   # parse Caddy JSON access logs
+    ports: ["8080:8080"]                          # LAPI — the OPNsense firewall bouncer pulls decisions here
+    mem_limit: 384m

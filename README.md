@@ -34,10 +34,10 @@ Every machine in the fleet is named after **One Piece** — the crew that *is* t
 | Host | Hardware | Role | Detail |
 |---|---|---|---|
 | 🌐 `loguetown` | JIO Fiber ONT/router | ISP gateway (double-NAT) | The last town before the Grand Line |
-| 🛡️ `bartolomeo` | SKULLSAINTS Agni — Intel N150, 16 GB, **dual 2.5 GbE** | Firewall · DNS · reverse proxy · SSO | The Barrier Man — nothing gets through the wall |
+| 🛡️ `bartolomeo` | SKULLSAINTS Agni — Intel N150, 16 GB, **dual 2.5 GbE** | Firewall · routing · WireGuard · DNS (AdGuard/Unbound) | The Barrier Man — nothing gets through the wall |
 | 🔀 `sabaody` | TP-Link TL-SG108E (8-port smart) | Managed switch / VLAN trunk | The junction archipelago |
 | 🔀 `waterseven` | TP-Link TL-SG105E (5-port smart) | Hall VLAN switch — splits the riser | Water Seven — the second junction city |
-| 🗄️ `poneglyph` | Minisforum N5 — Ryzen 7 255, 16→32 GB, 512 GB NVMe + 2×4 TB HDD | NAS · media · apps (Proxmox) | Indestructible records of history |
+| 🗄️ `poneglyph` | Minisforum N5 — Ryzen 7 255, 16→32 GB, 512 GB NVMe + 2×4 TB HDD | NAS · media · apps · reverse proxy + SSO (Proxmox) | Indestructible records of history |
 | 🧠 `vegapunk` | Core Ultra 265K, **RTX 5070 Ti 16 GB**, 64 GB | LLM inference server (now) | Punk Records — the brain every satellite queries |
 | 🎓 `chopper` | Ryzen 7 3700X, RTX 2070 Super, 32 GB | Study / dev / gaming (son's PC) | The crew's youngest, always studying |
 | ⛓️ `impeldown` | Beelink SER5 — Ryzen 7 5800H, 16 GB | Cyber sandbox + retro emulation (isolated) | The great prison — nothing escapes |
@@ -61,9 +61,10 @@ flowchart TB
     end
 
     subgraph HOME [" Home Network "]
-        BART["🛡️ bartolomeo<br/>OPNsense · AdGuard · Caddy · Authelia"]
+        BART["🛡️ bartolomeo<br/>OPNsense · AdGuard · Unbound · WireGuard"]
         SAB["🔀 sabaody<br/>VLAN trunk"]
         subgraph V20 [" VLAN 20 · Servers "]
+            PROXY["🔐 ct-proxy<br/>Caddy · Authelia · Vaultwarden"]
             PONE["🗄️ poneglyph<br/>Proxmox: media, docs, git, cloud"]
             VEGA["🧠 vegapunk<br/>LLM API"]
         end

@@ -31,7 +31,7 @@ flowchart TB
 > [!WARNING]
 > **Big AD labs won't fit.** **GOAD / GOAD-Light** officially want **20–32 GB** RAM — not viable on 16 GB. **DetectionLab is sunset (2023)** — don't build on it. If you later want a full Active-Directory range, that's a job for a 32–64 GB box (a future `chopper`/`pluton`-class machine or a Proxmox range), not `impeldown`.
 
-**Isolation is the whole point:** VLAN 60 has **no route to any other VLAN**, and **internet is off by default** — flip an OPNsense alias/schedule only when a task needs it, so a detonated sample can't phone home or pivot. Only `chopper` can SSH/RDP in.
+**Isolation is the whole point:** VLAN 60 has **no route to any other VLAN**, and **internet is off by default** — flip an OPNsense alias/schedule only when a task needs it, **and that toggle auto-expires after 1 hour** ([doc 12](12-automation.md#4-sandbox-internet-auto-off)) so a *forgotten* switch can't leave it online. A detonated sample can't phone home or pivot. Only `chopper` can SSH/RDP in.
 
 ## Boot B — Retro gaming & emulation
 

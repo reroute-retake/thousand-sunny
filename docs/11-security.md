@@ -21,6 +21,7 @@ Each layer is documented where it lives: [edge/tunnel](10-external-access.md), [
 | Compromised IoT/TV device | VLAN 40 can't reach LAN or Mgmt; internet-only |
 | Malware detonated in the lab | VLAN 60 dead-end, no LAN route, internet off by default ([13](13-impeldown-labs.md)) |
 | Credential stuffing on shared apps | Authelia MFA on admin; per-user accounts; Vaultwarden strong passwords |
+| Exploit in the web/identity tier (Caddy/Authelia) | Runs in an **unprivileged `ct-proxy` LXC**, not on the firewall — blast radius contained; snapshot + redeploy to recover |
 | Drive failure / bit rot | ZFS mirror + scrub + SMART alerts |
 | Ransomware on live data | Immutable/pull-based backups (PBS + restic), off-site copy, snapshots |
 | VPS takeover | Narrow tunnel firewall rule — VPS can reach only Jellyfin's IP:port, nothing else |
@@ -30,6 +31,23 @@ Each layer is documented where it lives: [edge/tunnel](10-external-access.md), [
 - **Infrastructure secrets** (compose `.env`, API tokens, WG keys) live in a **private** git repo encrypted with **SOPS + age** — never in this public repo (see [`.gitignore`](../.gitignore)). Decrypt on-host at deploy time.
 - **Rotate** the debrid/Telegram/API tokens the automations use; scope them minimally.
 - Proxmox/OPNsense/switch admin creds are MFA-gated and unique.
+
+## Break-glass / offline credentials
+
+> [!WARNING]
+> **Vaultwarden must not be the only copy of the passwords you'd need to fix a dead network.** If `poneglyph`/`ct-proxy`/DNS are down, Authelia and Vaultwarden are down with them — and you can't log in to fix anything. Classic chicken-and-egg lockout.
+
+Keep an **offline, network-independent** copy of the *core infrastructure* secrets:
+
+| Secret | Why it's break-glass |
+|---|---|
+| Proxmox `root` (`poneglyph`) | Fix the hypervisor when the web UI/SSO is down |
+| OPNsense `root` / console | Fix routing/DNS/firewall from the console |
+| ZFS + off-site backup passphrases | Without them, backups are unrecoverable |
+| `ct-proxy`/Authelia bootstrap + Vaultwarden admin token | To rebuild the identity tier itself |
+| Domain/DuckDNS + `puffingtom` VPS login | To restore external access |
+
+**Where:** an encrypted **KeePassXC** file on a couple of local laptops (synced by hand, *not* via the lab) **and** a printed copy in a physical safe. Update it whenever these rotate, and **test the path once** — can you get a Proxmox console and unlock ZFS using only the offline copy? Everything *else* (family logins, app API keys) stays in Vaultwarden.
 
 ## Configuration backup & change management
 

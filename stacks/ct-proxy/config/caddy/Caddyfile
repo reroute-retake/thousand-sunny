@@ -1,0 +1,48 @@
+# ct-proxy Caddy — internal reverse proxy for *.sunny.home.
+# Uses Caddy's internal CA (local_certs) for .home names — trust the root CA on family
+# devices once. For a real public domain, remove local_certs and let ACME issue certs.
+{
+	email admin@sunny.home
+	local_certs
+	log {
+		output file /var/log/caddy/access.log   # CrowdSec parses this
+		format json
+	}
+}
+
+# Reusable Authelia forward-auth (MFA) snippet.
+(authelia) {
+	forward_auth authelia:9091 {
+		uri /api/authz/forward-auth
+		copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+	}
+}
+
+# --- Identity endpoints (their own auth; NOT behind Authelia so you can bootstrap/recover) ---
+auth.sunny.home {
+	reverse_proxy authelia:9091
+}
+vault.sunny.home {
+	reverse_proxy vaultwarden:80
+}
+
+# --- Media: Jellyfin has its own login, so no Authelia in front ---
+jellyfin.sunny.home {
+	reverse_proxy 10.10.20.11:8096
+}
+
+# --- Admin surfaces: gate with Authelia MFA ---
+proxmox.sunny.home {
+	import authelia
+	reverse_proxy https://10.10.20.2:8006 {
+		transport http {
+			tls_insecure_skip_verify
+		}
+	}
+}
+
+# Add more services here, e.g.:
+# immich.sunny.home   { reverse_proxy 10.10.20.12:2283 }
+# git.sunny.home      { reverse_proxy 10.10.20.15:3000 }
+# n8n.sunny.home      { import authelia
+#                       reverse_proxy 10.10.20.20:5678 }

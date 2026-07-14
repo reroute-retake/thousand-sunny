@@ -34,13 +34,14 @@ flowchart TD
 | `ct-library` | Docker-LXC | Paperless-ngx, Kavita, Navidrome | 3 | 3 GB | 15 GB | — | Docs/books/music on HDD |
 | `ct-cloud` | Docker-LXC | Nextcloud AIO, Collabora | 4 | 4 GB | 20 GB | — | AIO is Nextcloud's official turnkey path |
 | `ct-git` | LXC | Forgejo | 2 | 1 GB | 10 GB | — | Native LXC, tiny |
+| `ct-proxy` | Docker-LXC | Caddy, Authelia, Vaultwarden, CrowdSec, redis | 2 | 1.5 GB | 10 GB | — | **Web + identity tier, moved off the firewall** ([doc 05](05-core-services.md)) — unprivileged |
 | `ct-automation` | Docker-LXC | n8n, ntfy | 2 | 2 GB | 10 GB | — | Talks to AdGuard/Radarr/Telegram ([12](12-automation.md)) |
 | `ct-observe` | Docker-LXC | Homepage, Uptime Kuma, Beszel, Grafana, Loki, Alloy | 3 | 3 GB | 20 GB | — | Central logs + dashboards ([09](09-observability.md)) |
 | `vm-pbs` | VM | Proxmox Backup Server | 2 | 2 GB | 32 GB | — | Dedup backups; can also be its own tiny box later |
 | `vm-hass` *(opt)* | VM | Home Assistant OS | 2 | 2 GB | 32 GB | — | Only if home-automation grows ([12](12-automation.md)) |
 | **Reserve** | — | ZFS ARC + host | — | ~5–6 GB | — | — | Cap `zfs_arc_max` (~6–8 GB) |
 
-**RAM budget:** ~27 GB committed + ~5–6 GB ARC/host ≈ **fits 32 GB with a thin margin.**
+**RAM budget:** ~28–29 GB committed (now incl. `ct-proxy`) + ARC/host. At 32 GB you must **cap `zfs_arc_max` to ~4 GB** — it genuinely fits, but 32 GB is the **floor**. As the container set grows, **2×32 GB = 64 GB** (the N5's max) is the comfort target.
 
 > [!WARNING]
 > This is exactly why **16 GB is not enough** on `poneglyph`. At 16 GB, ARC + host eats ~8 GB and you'd have ~8 GB for all guests — you'd be OOM-killing containers constantly, and memory-spiky jobs like **Immich face-recognition scans** and **Nextcloud file indexing** would tip it over. The **32 GB upgrade is a Day-0 blocking prerequisite, not a roadmap nice-to-have** — do it before go-live. ([15 · shopping](15-roadmap.md))
@@ -49,7 +50,7 @@ flowchart TD
 
 | Host | Virtualization | What |
 |---|---|---|
-| `bartolomeo` | bare-metal | OPNsense (+ its plugins: AdGuard/Unbound, Caddy, CrowdSec run here or as jails/pkgs) |
+| `bartolomeo` | bare-metal | OPNsense + AdGuard/Unbound + WireGuard + CrowdSec firewall bouncer. Reverse proxy/SSO/vault deliberately **not** here → `ct-proxy` LXC ([doc 05](05-core-services.md)) |
 | `vegapunk`/`pluton` | bare-metal (Pop!\_OS) | LLM serving (Ollama/llama.cpp/vLLM) + LiteLLM; GPU stays on the metal for full performance |
 | `impeldown` | bare-metal dual-boot + nested KVM/VirtualBox | Kali host + throwaway target VMs; Batocera on the other boot |
 | `puffingtom`/`crowsnest` | Oracle VM (given) | Docker: Pangolin/Newt, reverse proxy, monitoring probes |
