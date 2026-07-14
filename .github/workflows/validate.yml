@@ -1,0 +1,89 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: markdownlint-cli2
+        run: npx --yes markdownlint-cli2 "**/*.md"
+
+  mermaid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install mermaid-cli
+        run: npm install -g @mermaid-js/mermaid-cli
+      - name: Parse every mermaid block
+        run: |
+          echo '{"args":["--no-sandbox","--disable-gpu"]}' > pptr.json
+          python3 scripts/extract-mermaid.py mmd
+          rc=0
+          for m in mmd/*.mmd; do
+            mmdc -q -p pptr.json -i "$m" -o "$m.svg" \
+              || { echo "::error::Mermaid parse failed in $m"; echo '----'; cat "$m"; echo '----'; rc=1; }
+          done
+          exit $rc
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pip install yamllint
+      - run: yamllint -c .yamllint.yml .
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: docker compose config (stacks + deploy)
+        run: |
+          rc=0
+          for f in stacks/*/docker-compose.yml; do
+            d=$(dirname "$f")
+            [ -f "$d/.env.example" ] && cp "$d/.env.example" "$d/.env"
+            docker compose -f "$f" config -q || { echo "::error::invalid compose: $f"; rc=1; }
+          done
+          [ -f deploy/.env.example ] && cp deploy/.env.example deploy/pangolin/.env
+          for f in deploy/pangolin/*.yml; do
+            docker compose -f "$f" config -q || { echo "::error::invalid compose: $f"; rc=1; }
+          done
+          exit $rc
+
+  internal-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Relative links + heading anchors
+        run: python3 scripts/check-internal-links.py
+
+  external-links:
+    runs-on: ubuntu-latest
+    continue-on-error: true   # advisory only — external sites rate-limit and rot
+    steps:
+      - uses: actions/checkout@v4
+      - name: lychee (external URLs)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --max-retries 2 --accept 200,206,429 "**/*.md"
+          fail: false
