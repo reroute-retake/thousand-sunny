@@ -94,35 +94,30 @@ config interface 'mgmt'
     option gateway '10.10.10.1'
     list dns '10.10.10.1'
 
-# SSID-carrying VLANs — bridged only, no IP on the AP
-config interface 'servers'
-    option device 'br-lan.20'
-    option proto 'none'
-config interface 'trusted'
-    option device 'br-lan.30'
-    option proto 'none'
-config interface 'iot'
-    option device 'br-lan.40'
-    option proto 'none'
-config interface 'guest'
-    option device 'br-lan.50'
+# The VLAN-aware bridge as a single network handle for Wi-Fi (see wireless below).
+# SSIDs attach here and pick their VLAN via `option vid` — no per-VLAN interface stanzas needed.
+config interface 'lan'
+    option device 'br-lan'
     option proto 'none'
 ```
 
-`/etc/config/wireless` — map each SSID to a VLAN (multi-SSID per radio; keys are placeholders, never commit real ones):
+`/etc/config/wireless` — each SSID attaches to the `lan` bridge and picks its VLAN with **`option vid`** (multi-SSID per radio; keys are placeholders, never commit real ones):
 ```uci
 config wifi-iface
     option device 'radio0'          # 5 GHz
     option mode 'ap'
-    option network 'trusted'
+    option network 'lan'            # the VLAN-aware br-lan bridge
+    option vid '30'                 # tag this SSID onto VLAN 30 (Trusted)
     option ssid 'ThousandSunny'
     option encryption 'sae-mixed'   # WPA2/WPA3
     option key 'REPLACE_TRUSTED_PSK'
+    option ieee80211w '1'
 
 config wifi-iface
     option device 'radio1'          # 2.4 GHz
     option mode 'ap'
-    option network 'iot'
+    option network 'lan'
+    option vid '40'                 # VLAN 40 (IoT)
     option ssid 'ThousandSunny-IoT'
     option encryption 'psk2'
     option key 'REPLACE_IOT_PSK'
@@ -130,13 +125,21 @@ config wifi-iface
 config wifi-iface
     option device 'radio0'
     option mode 'ap'
-    option network 'guest'
+    option network 'lan'
+    option vid '50'                 # VLAN 50 (Guest)
     option ssid 'ThousandSunny-Guest'
     option encryption 'sae-mixed'
     option key 'REPLACE_GUEST_PSK'
     option isolate '1'              # guest client isolation
 ```
-Apply: `uci commit && reload_config` (or reboot). Disable DHCP on these interfaces in `/etc/config/dhcp` (`option ignore '1'` per interface) if not already off.
+Apply: `uci commit && reload_config` (or reboot). Ensure DHCP is off on `lan` (`/etc/config/dhcp` → `option ignore '1'`) since OPNsense serves DHCP per VLAN.
+
+> [!NOTE]
+> **Two valid ways to map SSIDs → VLANs on DSA — both documented, both bridge correctly:**
+> - **`option vid` on `network 'lan'`** *(used above)* — the cleaner DSA-native form: netifd adds the SSID's wlan port straight into `br-lan` and sets its PVID, with no extra per-VLAN interface stanzas.
+> - **`br-lan.X` interfaces** — define `config interface 'trusted'` → `option device 'br-lan.30'`, `option proto 'none'`, then point the wifi at `option network 'trusted'`. This is the exact pattern in the [OpenWrt VLAN wiki](https://openwrt.org/docs/guide-user/network/vlan/switch_configuration); netifd auto-detects that `br-lan.30` sits on a VLAN-aware bridge and adds the wlan to that VLAN — **`option type 'bridge'` is *not* required** for traffic to pass.
+>
+> **Verify either way:** `bridge vlan show` — each `wlanX` / `phyX-apY` port should read `PVID Egress Untagged` for its VLAN. (Heads-up: LuCI's VLAN-interface picker had a **save-bug in 24.10.1** — fine in 24.10.0 and current; edit `/etc/config/wireless` directly if the GUI won't save.)
 
 ## 6 · Verify (the trap check)
 - AP mgmt reachable at **`10.10.10.3`** (VLAN 10) from the mgmt VLAN — and **not** from any Wi-Fi SSID.

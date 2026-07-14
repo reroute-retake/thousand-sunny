@@ -2,6 +2,11 @@
 
 All notable changes to **Project Thousand Sunny** documentation. Format loosely follows [Keep a Changelog](https://keepachangelog.com/). Landscape date: **July 2026**.
 
+## [1.6.1] — 2026-07-14 — denden SSID→VLAN mapping (review)
+
+### Changed
+- Runbook 06 §5 now maps SSIDs → VLANs with the cleaner DSA-native **`option vid` on `network 'lan'`** (drops the per-VLAN interface stanzas for a single `lan`/`br-lan` handle). Documented the `br-lan.X` + `option network` form as an **equally valid alternative** — it's the official OpenWrt VLAN-wiki pattern and bridges correctly *without* `option type 'bridge'` (netifd auto-detects the VLAN-aware bridge), so it was never broken. Added a `bridge vlan show` verification step and flagged the LuCI 24.10.1 VLAN-picker save regression.
+
 ## [1.6.0] — 2026-07-14 — denden OpenWrt runbook
 
 ### Added
